@@ -1,0 +1,10 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: python-interface-to-workflows
+  title: python-interface-to-workflows
+  description:  Python alternative to creating and running argo workflows in the Data Analysis Platform
+spec:
+  type: service
+  lifecycle: experimental
+  owner: group:data-analysis

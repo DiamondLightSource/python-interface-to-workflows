@@ -1,0 +1,21 @@
+# Changes here will be overwritten by Copier
+_commit: 5.1.0
+_src_path: https://github.com/DiamondLightSource/python-copier-template.git
+author_email: thomas.thomas@diamond.ac.uk
+author_name: Thomas Binu Thomas
+component_lifecycle: experimental
+component_owner: group:data-analysis
+component_type: service
+description: ' Python alternative to creating and running argo workflows in the Data
+    Analysis Platform'
+distribution_name: python-interface-to-workflows
+docker: true
+docker_debug: false
+docs_type: README
+git_platform: github.com
+github_org: DiamondLightSource
+package_name: python_interface_to_workflows
+pypi: false
+repo_name: python-interface-to-workflows
+strict_typing: true
+type_checker: pyright
