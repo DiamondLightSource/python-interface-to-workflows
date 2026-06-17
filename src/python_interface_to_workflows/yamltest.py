@@ -26,19 +26,22 @@ class Content:
 
 
 class_with_more_content = Content("a", "b", "c")
-x = yaml.dump(class_with_more_content)
-print(x)
-xlist = x.split("\n")
-title = re.sub(r"!!python\/object:__main__\.", "", xlist[0]) + ":\n"
-lst: list[str] = []
-for key, value in vars(class_with_more_content).items():
-    lst.append(f"  {key}: {value}\n")
-rejoined = "".join(lst)
-titlepluscontent = title + rejoined
+
+
+def convert_to_yaml_structure(input_class: Content):
+    x = yaml.dump(input_class)
+    xlist = x.split("\n")
+    title = (re.sub(r"!!python\/object:__main__\.", "", xlist[0]) + ":\n").lower()
+    lst: list[str] = []
+    for key, value in vars(input_class).items():
+        lst.append(f"  {key}: {value}\n")
+    rejoined = "".join(lst)
+    titlepluscontent = title + rejoined
+    return titlepluscontent
 
 
 with open("test_yaml.yaml", "a") as f:
-    f.write(titlepluscontent)
+    f.write(convert_to_yaml_structure(class_with_more_content))
 # can use regex to edit this down like we see above^
 # will write:
 # A:
