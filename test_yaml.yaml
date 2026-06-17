@@ -1,0 +1,12 @@
+value: b
+Content:
+  value: a
+  other_value: b
+  third_value: c
+firstdict:
+  key: value
+seconddict:
+  secondsmallerkey: secondsmallervalue
+thirddict:
+  with_even_more:
+    layers: ofpairs
