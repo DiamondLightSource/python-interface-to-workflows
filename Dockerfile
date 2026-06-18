@@ -6,6 +6,10 @@ FROM ghcr.io/diamondlightsource/ubuntu-devcontainer:noble AS developer
 RUN apt-get update -y && apt-get install -y --no-install-recommends \
     graphviz \
     && apt-get dist-clean
+RUN curl -sLO "https://github.com/argoproj/argo-workflows/releases/download/v4.0.6/argo-linux-amd64.gz"
+RUN gunzip "argo-linux-amd64.gz"
+RUN chmod +x "argo-linux-amd64"
+RUN mv "./argo-linux-amd64" /usr/local/bin/argo
 
 # The build stage installs the context into the venv
 FROM developer AS build
@@ -22,7 +26,6 @@ ENV UV_PYTHON_INSTALL_DIR=/python
 # Sync the project without its dev dependencies
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked --no-editable --no-dev --managed-python
-
 
 # The runtime stage copies the built venv into a runtime container
 FROM ubuntu:noble AS runtime
