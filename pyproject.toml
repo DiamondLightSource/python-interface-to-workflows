@@ -13,7 +13,9 @@ classifiers = [
     "Programming Language :: Python :: 3.14",
 ]
 description = " Python alternative to creating and running argo workflows in the Data Analysis Platform"
-dependencies = [] # Add project dependencies here, e.g. ["click", "numpy"]
+dependencies = [
+    "requests",
+] # Add project dependencies here, e.g. ["click", "numpy"]
 dynamic = ["version"]
 license.file = "LICENSE"
 readme = "README.md"
