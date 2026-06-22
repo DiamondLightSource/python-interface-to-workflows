@@ -13,7 +13,7 @@ import urllib.parse
 import webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from pprint import pprint
-from typing import Any
+from typing import Any, cast
 
 import requests
 
@@ -55,15 +55,20 @@ def _get_token(dev: bool) -> None:
     auth_url = f"{authorize_url}?{urllib.parse.urlencode(params)}"
 
     print("Opening browser for user login...")
+    print(f"If the browser does not open, navigate to:\n{auth_url}")
     webbrowser.open(auth_url)
 
     # Step 3: Start local HTTP server to capture redirect with code
+    class _ReusingHTTPServer(HTTPServer):
+        allow_reuse_address = True
+        auth_code: str
+
     class CallbackHandler(BaseHTTPRequestHandler):
         def do_GET(self):
             query = urllib.parse.urlparse(self.path).query
             params = urllib.parse.parse_qs(query)
             if "code" in params:
-                self.server.auth_code = params["code"][0]
+                cast(_ReusingHTTPServer, self.server).auth_code = params["code"][0]
                 self.send_response(200)
                 self.end_headers()
                 self.wfile.write(
@@ -74,7 +79,7 @@ def _get_token(dev: bool) -> None:
                 self.end_headers()
                 self.wfile.write(b"Missing authorization code.")
 
-    httpd = HTTPServer(("localhost", int(port)), CallbackHandler)
+    httpd = _ReusingHTTPServer(("localhost", int(port)), CallbackHandler)
     httpd.handle_request()  # Wait for one request
     auth_code = httpd.auth_code
 
