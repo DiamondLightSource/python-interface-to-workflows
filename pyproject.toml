@@ -14,7 +14,8 @@ classifiers = [
 ]
 description = " Python alternative to creating and running argo workflows in the Data Analysis Platform"
 dependencies = [
-    "requests",
+    "gql",
+    "aiohttp",
 ] # Add project dependencies here, e.g. ["click", "numpy"]
 dynamic = ["version"]
 license.file = "LICENSE"
