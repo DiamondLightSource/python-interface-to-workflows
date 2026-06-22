@@ -5,15 +5,17 @@ on:
     branches:
       - main
     tags:
-      - '*'
+      - "*"
   pull_request:
 
 jobs:
-
   lint:
     uses: ./.github/workflows/_tox.yml
     with:
       tox: pre-commit,type-checking
+
+  commit-lint:
+    uses: ./.github/workflows/_commit_msg.yml
 
   test:
     strategy:
@@ -38,7 +40,7 @@ jobs:
 
   dist:
     uses: ./.github/workflows/_dist.yml
-  
+
   release:
     needs: [dist, test]
     if: github.ref_type == 'tag'
