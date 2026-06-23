@@ -16,6 +16,8 @@ description = " Python alternative to creating and running argo workflows in the
 dependencies = [
     "gql",
     "aiohttp",
+    "hera",
+    "requests",
 ] # Add project dependencies here, e.g. ["click", "numpy"]
 dynamic = ["version"]
 license.file = "LICENSE"
