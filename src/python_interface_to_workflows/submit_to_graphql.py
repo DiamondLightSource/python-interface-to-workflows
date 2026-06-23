@@ -1,11 +1,14 @@
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 
+from python_interface_to_workflows.keycloakchecker import return_key
+
 
 def submit_to_graphql():
+    token = return_key(dev=True)
     transport = AIOHTTPTransport(
         url="https://staging.workflows.diamond.ac.uk/graphql",
-        headers={"Authorization": "Bearer "},  # after Bearer = access token
+        headers={"Authorization": f"Bearer {token}"},  # after Bearer = access token
     )
     client = Client(
         transport=transport,
@@ -33,3 +36,6 @@ mutation SubmitDivision {
     visit = "ks10000-3/c"
     name = str(result["submitWorkflowTemplate"]["name"])
     print(f"Job '{visit}-{name}' submitted.")
+
+
+submit_to_graphql()
