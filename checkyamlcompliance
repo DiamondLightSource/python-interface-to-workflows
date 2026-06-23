@@ -1,0 +1,50 @@
+#!/bin/python
+import os
+import re
+
+yamlpath = "src/python_interface_to_workflows/templates/"
+yamllist: list[str] = []
+for x in os.listdir(yamlpath):
+    if x.endswith(".yaml"):
+        yamllist.append(x)
+
+for file in yamllist:
+    x = 0
+    y = 0
+    z = 0
+    with open(yamlpath + file) as s:
+        filelist = s.readlines()
+        cleanfilenames: list[str] = []
+        for line in filelist:
+            line = line.rstrip()
+            cleanfilenames.append(line)
+        required_labels: list[str] = [
+            r"apiVersion:\sargoproj\.io\/v1alpha",
+            r"kind:\sClusterWorkflowTemplate",
+            r"metadata:",
+            r"\s\sannotations:",
+            r"\s\s\s\sworkflows.argoproj.io/title:\s.+",
+            r"\s\s\s\sworkflows.diamond.ac.uk/repository:\s.+",
+            r"\s\slabels:",
+            r"\s\s\s\sworkflows.diamond.ac.uk/science-group-.+:\s.+",
+        ]
+    for x in range(0, len(required_labels)):
+        for y in range(0, len(cleanfilenames)):
+            if re.match(required_labels[x], cleanfilenames[y]):
+                print(required_labels[x])
+                z += 1
+
+    gen_name = any(re.search(r"\s\sgenerateName:\s.+", line) for line in cleanfilenames)
+    normal_name = any(re.search(r"^\s\sname:\s.+", line) for line in cleanfilenames)
+    if gen_name and not normal_name:
+        z += 1
+    elif normal_name and not gen_name:
+        z += 1
+    else:
+        z -= 1
+
+    if z == 9:
+        exit(0)
+    else:
+        print("Error! missing a label or name!")
+        exit(1)

@@ -14,16 +14,16 @@ def submit_to_graphql():
     mutation = gql("""
 mutation SubmitDivision {
   submitWorkflowTemplate(
-    name: "division"
+    name: "division.yaml"
     visit: {
       proposalCode: "ks",
       proposalNumber: 10000,
       number: 3
     }
-    parameters: {
-      numinput: "19",
-      numdivisor: "10"
-    }
+     parameters: {
+       numinput: "19",
+       numdivisor: "10"
+     }
     ){
     name
 }
