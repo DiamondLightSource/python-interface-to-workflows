@@ -1,14 +1,18 @@
 import json
 
+from hera.shared import global_config
 from hera.workflows import (
     Artifact,
     Steps,
     Volume,
     Workflow,
-    WorkflowsService,
     script,  # pyright: ignore[reportUnknownVariableType]
 )
 from hera.workflows import models as m
+
+global_config.host = "https://argo-workflows.staging.workflows.diamond.ac.uk/"
+global_config.image = "python:3.10"
+global_config.token = "Token"
 
 
 @script(
@@ -29,9 +33,10 @@ def do_devision(x: int, y: int):
 
 
 with Workflow(
-    generate_name="hera-division",
+    generate_name="hera-division-",
     entrypoint="divide",
-    namespace="https://staging.workflows.diamond.ac.uk/workflows/",
+    namespace="ks10000-3",
+    name="hera-division",
     api_version="argoproj.io/v1alpha1",
     kind="ClusterWorkflowTemplate",
     labels={"workflows.diamond.ac.uk/science-group-examples": "true"},
@@ -50,14 +55,4 @@ with Workflow(
 with open("src/divisionyaml.yaml", "w") as div:
     div.write(w.to_yaml())  # pyright: ignore[reportUnknownMemberType]
 
-sendthis = m.WorkflowSubmitRequest(
-    namespace="https://staging.workflows.diamond.ac.uk/workflows/",
-    resource_kind="ClusterWorkflowTemplate",
-    resource_name="hera-division",
-)
-a = WorkflowsService(
-    host="https://staging.workflows.diamond.ac.uk/graphql",
-    namespace="https://staging.workflows.diamond.ac.uk/workflows/",
-    token="a",
-)
-WorkflowsService.submit_workflow(a, req=sendthis)
+w.create()
