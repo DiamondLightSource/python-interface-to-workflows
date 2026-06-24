@@ -17,6 +17,14 @@ repos:
         types: [python]
         require_serial: true
 
+      - id: run_files
+        name: run yaml-making files
+        language: system
+        entry: bash runthefiles
+        types: [python]
+        pass_filenames: true
+        require_serial: true
+
       - id: ruff-format
         name: format with ruff
         language: system
