@@ -4,8 +4,8 @@ import os
 from hera.shared import global_config
 from hera.workflows import (
     Artifact,
+    EmptyDirVolume,
     Steps,
-    Volume,
     Workflow,
     script,  # pyright: ignore[reportUnknownVariableType]
 )
@@ -20,13 +20,13 @@ global_config.token = os.environ.get("TOKEN")
     volume_mounts=[m.VolumeMount(name="output-dir", mount_path="/output-dir/")],
     outputs=Artifact(name="json-output", path="/output-dir/output.json"),
 )
-def do_devision(a: int, b: int):
+def do_division(a: int, b: int):
     div = a / b
     intdiv = a // b
     remain = a % b
     dictionary_of_results = {
         "divide": div,
-        "integer divisor": intdiv,
+        "quotient": intdiv,
         "remainder": remain,
     }
     with open("/output-dir/output.json", "w") as otpt:
@@ -36,7 +36,7 @@ def do_devision(a: int, b: int):
 with Workflow(
     generate_name="hera-division-",
     entrypoint="divide",
-    namespace="ks10000-3",
+    namespace=os.environ.get("NAMESPACE"),
     api_version="argoproj.io/v1alpha1",
     kind="ClusterWorkflowTemplate",
     labels={"workflows.diamond.ac.uk/science-group-examples": "true"},
@@ -46,10 +46,10 @@ with Workflow(
          remainder, output float, and output string to a json file""",
         "workflows.diamond.ac.uk/repository": "https://github.com/DiamondLightSource/python-interface-to-workflows",
     },
-    volumes=Volume(name="output-dir", mount_path="/output-dir", size="1Mi"),
+    volumes=EmptyDirVolume(name="output-dir", mount_path="/output-dir"),
 ) as w:
     with Steps(name="divide"):
-        do_devision(name="first", arguments={"a": 2, "b": 5})
+        do_division(name="first", arguments={"a": 2, "b": 5})
 
 
 with open("divisionyaml.yaml", "w") as div:
