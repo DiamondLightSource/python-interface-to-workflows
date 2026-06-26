@@ -1257,6 +1257,7 @@ dependencies = [
     { name = "aiohttp" },
     { name = "gql" },
     { name = "hera" },
+    { name = "pyyaml" },
     { name = "requests" },
 ]
 
@@ -1267,6 +1268,7 @@ dev = [
     { name = "pyright" },
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "pyyaml" },
     { name = "ruff" },
     { name = "tox-uv" },
     { name = "types-mock" },
@@ -1277,6 +1279,7 @@ requires-dist = [
     { name = "aiohttp" },
     { name = "gql" },
     { name = "hera" },
+    { name = "pyyaml" },
     { name = "requests" },
 ]
 
@@ -1287,6 +1290,7 @@ dev = [
     { name = "pyright" },
     { name = "pytest" },
     { name = "pytest-cov" },
+    { name = "pyyaml" },
     { name = "ruff" },
     { name = "tox-uv" },
     { name = "types-mock" },

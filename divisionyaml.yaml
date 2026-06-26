@@ -1,5 +1,5 @@
 apiVersion: argoproj.io/v1alpha1
-kind: Workflow
+kind: ClusterWorkflowTemplate
 metadata:
   generateName: hera-division-
   annotations:
@@ -16,14 +16,14 @@ spec:
   - name: divide
     steps:
     - - name: first
-        template: do-division
+        template: do-devision
         arguments:
           parameters:
           - name: a
             value: '2'
           - name: b
             value: '5'
-  - name: do-division
+  - name: do-devision
     inputs:
       parameters:
       - name: a
@@ -47,7 +47,7 @@ spec:
         div = a / b
         intdiv = a // b
         remain = a % b
-        dictionary_of_results = {'divide': div, 'quotient': intdiv, 'remainder': remain}
+        dictionary_of_results = {'divide': div, 'integer divisor': intdiv, 'remainder': remain}
         with open('/output-dir/output.json', 'w') as otpt:
             json.dump(dictionary_of_results, otpt)
       command:
@@ -55,6 +55,12 @@ spec:
       volumeMounts:
       - name: output-dir
         mountPath: /output-dir/
-  volumes:
-  - name: output-dir
-    emptyDir: {}
+  volumeClaimTemplates:
+  - metadata:
+      name: output-dir
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Mi

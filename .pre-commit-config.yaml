@@ -20,23 +20,23 @@ repos:
       - id: create-workflow-templates
         name: creates workflow templates
         language: system
-        entry: bash scripts/runthefiles
+        entry: bash scripts/runthefiles.sh
         types: [python]
-        pass_filenames: true
-        require_serial: true
-
-      - id: confirm-diamond-compatability
-        name: ensure yaml is diamond-compatible
-        language: system
-        entry: python scripts/checkyamlcompliance
-        types: [yaml]
         pass_filenames: true
         require_serial: true
 
       - id: lint-yaml-files
         name: run argo lint on the yaml files
         language: system
-        entry: bash scripts/lintyaml
+        entry: bash scripts/lintyaml.sh
+        types: [yaml]
+        pass_filenames: true
+        require_serial: true
+
+      - id: confirm-diamond-compatability
+        name: ensure yaml is diamond-compatible
+        language: system
+        entry: uv run scripts/checkyamlcompliance.py
         types: [yaml]
         pass_filenames: true
         require_serial: true
