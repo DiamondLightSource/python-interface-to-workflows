@@ -10,10 +10,8 @@ RUN curl -sLO "https://github.com/argoproj/argo-workflows/releases/download/v4.0
 RUN gunzip "argo-linux-amd64.gz"
 RUN chmod +x "argo-linux-amd64"
 RUN mv "./argo-linux-amd64" /usr/local/bin/argo
-# Source - https://stackoverflow.com/a/53749426
-# Posted by Alain Gauthier
-# Retrieved 2026-06-25, License - CC BY-SA 4.0
-#change to proper kubectl intstaller
+
+#Install Kubectl
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
 RUN chmod +x ./kubectl
 RUN mv ./kubectl /usr/local/bin

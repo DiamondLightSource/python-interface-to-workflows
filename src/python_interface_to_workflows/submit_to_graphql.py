@@ -14,7 +14,7 @@ def submit_to_graphql():
     mutation = gql("""
 mutation SubmitDivision {
   submitWorkflowTemplate(
-    name: "division.yaml"
+    name: "division"
     visit: {
       proposalCode: "ks",
       proposalNumber: 10000,
