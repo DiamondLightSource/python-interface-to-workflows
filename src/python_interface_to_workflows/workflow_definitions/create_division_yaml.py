@@ -34,11 +34,11 @@ def do_division(a: int, b: int):
 
 
 with Workflow(
-    generate_name="hera-division-",
+    generate_name="hera-division-",  # when running on graphql this should be name
     entrypoint="divide",
     namespace=os.environ.get("NAMESPACE"),
     api_version="argoproj.io/v1alpha1",
-    kind="ClusterWorkflowTemplate",
+    kind="Workflow",  # ClusterWorkflowTemplate", when on graphql
     labels={"workflows.diamond.ac.uk/science-group-examples": "true"},
     annotations={
         "workflows.argoproj.io/title": "Division via hera test",
