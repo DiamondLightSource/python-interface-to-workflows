@@ -30,29 +30,20 @@ for file in yamllist:
                 clst_tmpt = False
     else:
         clst_tmpt = False
-    if "metadata" in yamldata.keys() and type(yamldata["metadata"]) is dict:
-        normal_name = False
-        gen_name = False
-        if "generateName" in yamldata["metadata"].keys():
-            gen_name = True
-        if "name" in yamldata["metadata"].keys():
-            normal_name = True
+    if "metadata" in yamldata.keys():
+        metadata = True
+        gen_name = "generateName" in yamldata["metadata"].keys()
+        normal_name = "name" in yamldata["metadata"].keys()
         if "annotations" in yamldata["metadata"].keys():
             annotations = True
-            if (
+            title = (
                 "workflows.argoproj.io/title"
                 in yamldata["metadata"]["annotations"].keys()
-            ):
-                title = True
-            else:
-                title = False
-            if (
+            )
+            repo = (
                 "workflows.diamond.ac.uk/repository"
                 in yamldata["metadata"]["annotations"].keys()
-            ):
-                repo = True
-            else:
-                repo = False
+            )
         else:
             annotations = title = repo = False
         if "labels" in yamldata["metadata"].keys():
@@ -68,7 +59,7 @@ for file in yamllist:
             group = labels = False
     else:
         metadata = normal_name = gen_name = False
-    if api_ver and clst_tmpt and title and repo and group and annotations and labels:
+    if all([api_ver, clst_tmpt, title, repo, group, annotations, labels]):
         if gen_name != normal_name:
             exit(0)
         else:
@@ -78,6 +69,7 @@ for file in yamllist:
             exit(1)
     else:
         print(f"""
+                within file: {file}...
                 metadata present?: {metadata}
                 annotations present?: {annotations}
                 labels present?: {labels}
