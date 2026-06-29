@@ -4,9 +4,6 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 from typing import cast
 
 from keycloak import KeycloakOpenID
-
-# Configure client
-# For versions older than 18 /auth/ must be added at the end of the server_url.
 from keycloak.pkce_utils import generate_code_challenge, generate_code_verifier
 
 
@@ -71,14 +68,13 @@ def return_key(dev: bool) -> str:
 
     auth_code = _open_auth_url(auth_url)
 
-    access_token: dict[str, str] = keycloak_openid.token(  # pyright: ignore[reportUnknownMemberType]
-        grant_type="authorization_code",
-        code=auth_code,
-        redirect_uri="http://localhost:5173/",
-        code_verifier=code_verifier,
-        code_challenge=code_challenge,
+    access_token: dict[str, str] = (  # pyright: ignore[reportUnknownVariableType]
+        keycloak_openid.token(  # pyright: ignore[reportUnknownMemberType]
+            grant_type="authorization_code",
+            code=auth_code,
+            redirect_uri="http://localhost:5173/",
+            code_verifier=code_verifier,
+            code_challenge=code_challenge,
+        )
     )
     return str(access_token["access_token"])  # pyright: ignore[reportUnknownArgumentType]
-
-
-# refresh token lasts 15 mins over the normal token which lasts 15 mins itself
