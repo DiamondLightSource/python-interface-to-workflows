@@ -36,6 +36,3 @@ mutation SubmitDivision {
     visit = "ks10000-3/c"
     name = str(result["submitWorkflowTemplate"]["name"])
     print(f"Job '{visit}-{name}' submitted.")
-
-
-submit_to_graphql()
