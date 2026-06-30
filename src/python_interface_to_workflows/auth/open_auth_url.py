@@ -1,4 +1,4 @@
-import os
+import socket
 import urllib.parse
 import webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -27,15 +27,10 @@ def open_auth_url(auth_url: str):
                 self.end_headers()
                 self.wfile.write(b"Missing authorization code.")
 
-    # try:
     httpd = _ReusingHTTPServer(("localhost", 5173), CallbackHandler)
-    webbrowser.open(auth_url)
-    httpd.handle_request()  # Wait for one request
-    os.environ["AUTH"] = httpd.auth_code
-    httpd.server_close()
-    exit()
-    # except OSError:
-    # os.environ["AUTH"] = ""
-    # print("OSERROR")
-    # time.sleep(2)
-    # exit()
+    try:
+        httpd.handle_request()
+        return httpd.auth_code
+    finally:
+        httpd.socket.shutdown(socket.SHUT_RDWR)
+        httpd.server_close()
