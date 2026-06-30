@@ -9,6 +9,7 @@ import datetime
 import hashlib
 import json
 import os
+import socket
 import urllib.parse
 import webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -80,8 +81,12 @@ def _get_token(dev: bool) -> None:
                 self.wfile.write(b"Missing authorization code.")
 
     httpd = _ReusingHTTPServer(("localhost", int(port)), CallbackHandler)
-    httpd.handle_request()  # Wait for one request
-    auth_code = httpd.auth_code
+    try:
+        httpd.handle_request()
+        auth_code = httpd.auth_code
+    finally:
+        httpd.socket.shutdown(socket.SHUT_RDWR)
+        httpd.server_close()
 
     print("Authorization code received:", auth_code)
 

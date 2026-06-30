@@ -51,9 +51,11 @@
         // Make sure SELinux does not disable with access to host filesystems like tmp
         "--security-opt=label=disable"
     ],
-    "forwardPorts": [
-        5173
-    ],
+    "portsAttributes": {
+        "5173": {
+            "onAutoForward": "ignore"
+        }
+    },
     "mounts": [
         // Mount in the user terminal config folder so it can be edited
         {
