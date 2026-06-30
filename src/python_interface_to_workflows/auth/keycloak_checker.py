@@ -1,5 +1,3 @@
-import os
-
 from keycloak import KeycloakOpenID
 from keycloak.pkce_utils import generate_code_challenge, generate_code_verifier
 
@@ -10,7 +8,7 @@ def return_key(dev: bool) -> str:
     match dev:
         case True:
             keycloak_openid = KeycloakOpenID(
-                server_url="https://identity.diamond.ac.uk/",
+                server_url="https://identity-test.diamond.ac.uk/",
                 client_id="workflows-ui-dev",
                 realm_name="dls",
                 client_secret_key="",
@@ -34,14 +32,20 @@ def return_key(dev: bool) -> str:
         code_challenge=code_challenge,
         code_challenge_method=code_challenge_method,
     )
-    open_auth_url(auth_url)
+    auth_code = open_auth_url(auth_url)
+    # save token and refresh token to file
+    # if they're present, check if access token is valid, if no but refresh token is
+    # , just refresh token
+    # if invalid, run whole thing
     token: dict[str, str] = (  # pyright: ignore[reportUnknownVariableType]
         keycloak_openid.token(  # pyright: ignore[reportUnknownMemberType]
             grant_type="authorization_code",
-            code=os.environ["AUTH"],
+            code=auth_code,
             redirect_uri="http://localhost:5173/",
             code_verifier=code_verifier,
-            code_challenge=code_challenge,
         )
     )
     return token["access_token"]  # pyright: ignore[reportUnknownArgumentType]
+
+
+print(return_key(dev=True))
