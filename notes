@@ -1,0 +1,12 @@
+# refresh_token: dict[str, str] = (
+# # pyright: ignore[reportUnknownVariableType]
+#     keycloak_openid.refresh_token(  # pyright: ignore[reportUnknownMemberType]
+#         token["refresh_token"]
+#     )
+# )
+# print(refresh_token)
+
+# save token and refresh token to file
+# if they're present, check if access token is valid, if no but refresh token is
+# , just refresh token
+# if invalid, run whole thing

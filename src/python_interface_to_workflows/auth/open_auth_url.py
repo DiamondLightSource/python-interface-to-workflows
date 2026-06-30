@@ -1,3 +1,4 @@
+import os
 import socket
 import urllib.parse
 import webbrowser
@@ -28,9 +29,14 @@ def open_auth_url(auth_url: str):
                 self.wfile.write(b"Missing authorization code.")
 
     httpd = _ReusingHTTPServer(("localhost", 5173), CallbackHandler)
+    webbrowser.open(auth_url)
     try:
         httpd.handle_request()
-        return httpd.auth_code
+        os.environ["AUTH"] = httpd.auth_code
+    except OSError:
+        os.environ["AUTH"] = ""
+        print("ERROR: Port in use. Please restart your terminal.")
+        exit(1)
     finally:
         httpd.socket.shutdown(socket.SHUT_RDWR)
         httpd.server_close()
