@@ -1,7 +1,7 @@
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 
-from python_interface_to_workflows.keycloak_checker import return_key
+from python_interface_to_workflows.auth.keycloak_checker import return_key
 
 
 def submit_to_graphql():
