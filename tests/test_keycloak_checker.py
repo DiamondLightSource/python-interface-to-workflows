@@ -1,15 +1,16 @@
+import os
 from unittest.mock import MagicMock, patch
 
 from pytest import mark
 
-from python_interface_to_workflows.keycloak_checker import return_key
+from python_interface_to_workflows.auth.keycloak_checker import return_key
 
 
 @mark.parametrize("dev", [True, False])
-@patch("python_interface_to_workflows.keycloak_checker.KeycloakOpenID")
-@patch("python_interface_to_workflows.keycloak_checker.generate_code_verifier")
-@patch("python_interface_to_workflows.keycloak_checker.generate_code_challenge")
-@patch("python_interface_to_workflows.keycloak_checker._open_auth_url")
+@patch("python_interface_to_workflows.auth.keycloak_checker.KeycloakOpenID")
+@patch("python_interface_to_workflows.auth.keycloak_checker.generate_code_verifier")
+@patch("python_interface_to_workflows.auth.keycloak_checker.generate_code_challenge")
+@patch("python_interface_to_workflows.auth.keycloak_checker.open_auth_url")
 def test_return_key(
     mock_open_auth_url: MagicMock,
     mock_gen_code_challenge: MagicMock,
@@ -19,8 +20,7 @@ def test_return_key(
 ):
     mock_gen_code_verifier.return_value = "verifier"
     mock_gen_code_challenge.return_value = ("challenge", "S256")
-    mock_open_auth_url.return_value = "auth_url_code"
-
+    os.environ["AUTH"] = "auth_url_code"
     keycloak = MagicMock()
     mock_gen_keycloak_id.return_value = keycloak
 
