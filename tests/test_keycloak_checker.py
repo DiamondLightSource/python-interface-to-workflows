@@ -25,7 +25,10 @@ def test_return_key(
     mock_gen_keycloak_id.return_value = keycloak
 
     keycloak.auth_url.return_value = "https://mock.site"
-    keycloak.token.return_value = {"access_token": "fake_token"}
+    keycloak.token.return_value = {
+        "access_token": "fake_token",
+        "refresh_token": "fake_refresh",
+    }
     assert return_key(dev) == "fake_token"
     mock_open_auth_url.assert_called_once_with("https://mock.site")
     keycloak.token.assert_called_once_with(
@@ -33,5 +36,4 @@ def test_return_key(
         code="auth_url_code",
         redirect_uri="http://localhost:5173/",
         code_verifier="verifier",
-        code_challenge="challenge",
     )
