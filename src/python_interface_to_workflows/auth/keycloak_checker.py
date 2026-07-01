@@ -1,8 +1,6 @@
 import os
 
 from keycloak import KeycloakOpenID
-
-# from keycloak.exceptions import KeycloakPostError
 from keycloak.pkce_utils import generate_code_challenge, generate_code_verifier
 
 from python_interface_to_workflows.auth.open_auth_url import open_auth_url
@@ -26,19 +24,6 @@ def return_key(dev: bool) -> str:
                 client_secret_key="",
                 pool_maxsize=1,
             )
-    # btw, as you review this, I don't think this try-except is
-    # necessary - pretty certain this functionality is already in keycloak
-    # as the tokens i've seen are suspiciously similar and also don't require a login
-    # which i believe is due to it figuring out we already have a refresh token
-    # ergo, not confident that this hashed out stuff is needed.
-    # try:
-    #     newtoken: dict[str, str] = (  # pyright: ignore[reportUnknownVariableType]
-    #         keycloak_openid.refresh_token(  # pyright: ignore[reportUnknownMemberType]
-    #             os.environ.get("REFRESH")  # pyright: ignore[reportArgumentType]
-    #         )
-    #     )
-    #     return newtoken["access_token"]
-    # except KeycloakPostError:
     code_verifier = generate_code_verifier()
     code_challenge, code_challenge_method = generate_code_challenge(code_verifier)
     auth_url = keycloak_openid.auth_url(
