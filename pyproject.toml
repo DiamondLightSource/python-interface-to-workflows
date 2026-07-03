@@ -36,6 +36,9 @@ dev = [
     "tox-uv",
     "types-mock",
     "PyYAML",
+    "pillow",
+    "numpy",
+    "h5py",
 ]
 
 [project.scripts]
