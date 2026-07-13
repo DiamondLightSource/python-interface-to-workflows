@@ -10,7 +10,7 @@ def return_key(dev: bool) -> str:
     match dev:
         case True:
             keycloak_openid = KeycloakOpenID(
-                server_url="https://identity.diamond.ac.uk/",
+                server_url="https://identity-test.diamond.ac.uk/",
                 client_id="workflows-ui-dev",
                 realm_name="dls",
                 client_secret_key="",
