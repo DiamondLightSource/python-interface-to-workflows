@@ -72,6 +72,3 @@ lockfiles/
 
 # environment variables file
 *.env
-
-# Python version
-.python-version
