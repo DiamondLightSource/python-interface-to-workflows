@@ -1,0 +1,40 @@
+# questions
+project_name:
+  type: str
+  help: What is the name for your project?
+  validator: >-
+    {% if not (project_name | regex_search('^[a-z_][a-z0-9_]*$')) %}
+    {{project_name}} is not a valid ruff-compatible python package name
+    {% endif %}
+
+repo_name:
+  type: str
+  help: |
+    What is the name for your new repo?
+    Generally, use the package name with underscores replaced by dashes.
+  default: "{{ project_name | replace('_', '-') }}"
+  validator: >-
+    {% if not (repo_name | regex_search('^[a-zA-Z0-9](?:[a-zA-Z0-9_.-]*[a-zA-Z0-9])?$')) %}
+    {{ repo_name }} is not a valid repo name
+    {% endif %}
+description:
+  type: str
+  help: Please provide a description of your project
+  placeholder: One line description of your module
+
+github_org:
+  type: str
+  help: What is your github organisation?
+  default: DiamondLightSource
+
+author_name:
+  type: str
+  help: What is your full name?
+  placeholder: FirstName LastName
+
+author_email:
+  type: str
+  help: What is your email address?
+  placeholder: email@diamond.ac.uk
+
+_subdirectory: "src/copier_template"

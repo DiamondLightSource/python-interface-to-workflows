@@ -16,7 +16,6 @@ repos:
         entry: ruff check --force-exclude --fix
         types: [python]
         require_serial: true
-        exclude: ^src/copier_template/src/\{\{ project_name \}\}/
 
       - id: create-workflow-templates
         name: creates workflow templates
