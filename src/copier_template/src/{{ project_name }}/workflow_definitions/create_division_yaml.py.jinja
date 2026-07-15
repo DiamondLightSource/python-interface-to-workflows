@@ -44,7 +44,7 @@ with Workflow(
         "workflows.argoproj.io/title": "Division via hera test",
         "workflows.argoproj.io/description": """Takes a numerical input and returns the
          remainder, output float, and output string to a json file""",
-        "workflows.diamond.ac.uk/repository": "https://github.com/DiamondLightSource/{{repo_name}}",
+        "workflows.diamond.ac.uk/repository": "https://github.com/{{github_org}}/{{repo_name}}",
     },
     volumes=EmptyDirVolume(name="output-dir", mount_path="/output-dir"),
 ) as w:
