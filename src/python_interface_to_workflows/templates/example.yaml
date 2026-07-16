@@ -122,6 +122,8 @@ spec:
       artifacts:
       - name: '{{inputs.parameters.extension}}-image'
         path: /tmp/{{inputs.parameters.extension}}-image.{{inputs.parameters.extension}}
+        archive:
+          none: {}
       parameters:
       - name: out-paths
         valueFrom:
@@ -173,6 +175,8 @@ spec:
       artifacts:
       - name: hdf5output
         path: /tmp/images.hdf5
+        archive:
+          none: {}
     script:
       image: python:3.10
       source: |-
