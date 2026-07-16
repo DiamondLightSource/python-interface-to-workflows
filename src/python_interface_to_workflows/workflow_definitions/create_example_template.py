@@ -8,6 +8,7 @@ from hera.workflows import (
     script,  # pyright: ignore[reportUnknownVariableType]
 )
 from hera.workflows import models as m
+from hera.workflows.archive import NoneArchiveStrategy
 
 global_config.host = "https://argo-workflows.staging.workflows.diamond.ac.uk/"
 global_config.token = ""
@@ -85,6 +86,7 @@ def generate_parameters(
         Artifact(
             name="{{inputs.parameters.extension}}-image",
             path="/tmp/{{inputs.parameters.extension}}-image.{{inputs.parameters.extension}}",
+            archive=NoneArchiveStrategy(),
         ),
     ],
 )
@@ -125,7 +127,11 @@ def create_image(
     command=["/tmp/venv/bin/python"],
     image="python:3.10",
     volume_mounts=[m.VolumeMount(name="tmpdir", mount_path="/tmp")],
-    outputs=Artifact(name="hdf5output", path="/tmp/images.hdf5"),
+    outputs=Artifact(
+        name="hdf5output",
+        path="/tmp/images.hdf5",
+        archive=NoneArchiveStrategy(),
+    ),
 )
 def to_hdf5(paths: str):
 
