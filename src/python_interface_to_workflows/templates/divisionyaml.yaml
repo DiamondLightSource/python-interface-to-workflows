@@ -2,6 +2,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: hera-division-
+  namespace: ks10000-3
   annotations:
     workflows.argoproj.io/description: |-
       Takes a numerical input and returns
