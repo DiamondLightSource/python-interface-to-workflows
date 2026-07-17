@@ -4,8 +4,8 @@ metadata:
   generateName: hera-division-
   annotations:
     workflows.argoproj.io/description: |-
-      Takes a numerical input and returns the
-               remainder, output float, and output string to a json file
+      Takes a numerical input and returns
+              the remainder, output float, and output string to a json file
     workflows.argoproj.io/title: Division via hera test
     workflows.diamond.ac.uk/repository: https://github.com/DiamondLightSource/python-interface-to-workflows
   labels:

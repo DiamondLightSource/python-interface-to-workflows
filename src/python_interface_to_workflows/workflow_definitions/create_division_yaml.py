@@ -1,7 +1,6 @@
 import json
 import os
 
-from hera.shared import global_config
 from hera.workflows import (
     Artifact,
     EmptyDirVolume,
@@ -11,9 +10,9 @@ from hera.workflows import (
 )
 from hera.workflows import models as m
 
-global_config.host = os.environ.get("HOST")
-global_config.image = str(os.environ.get("IMAGE"))
-global_config.token = os.environ.get("TOKEN")
+# from python_interface_to_workflows.prepare_to_submit import prepare_to_submit
+
+# prepare_to_submit(True)
 
 
 @script(
@@ -42,8 +41,8 @@ with Workflow(
     labels={"workflows.diamond.ac.uk/science-group-examples": "true"},
     annotations={
         "workflows.argoproj.io/title": "Division via hera test",
-        "workflows.argoproj.io/description": """Takes a numerical input and returns the
-         remainder, output float, and output string to a json file""",
+        "workflows.argoproj.io/description": """Takes a numerical input and returns
+        the remainder, output float, and output string to a json file""",
         "workflows.diamond.ac.uk/repository": "https://github.com/DiamondLightSource/python-interface-to-workflows",
     },
     volumes=EmptyDirVolume(name="output-dir", mount_path="/output-dir"),

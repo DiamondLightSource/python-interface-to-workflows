@@ -19,11 +19,11 @@ dependencies = [
     "hera",
     "requests",
     "PyYAML",
-    "python-keycloak",
     "pillow",
     "numpy",
     "h5py",
     "dotenv",
+    "python-keycloak",
 ] # Add project dependencies here, e.g. ["click", "numpy"]
 dynamic = ["version"]
 license.file = "LICENSE"
@@ -45,6 +45,7 @@ dev = [
     "numpy",
     "h5py",
     "dotenv",
+    "python-keycloak",
 ]
 
 [project.scripts]
