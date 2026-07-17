@@ -6,7 +6,7 @@ metadata:
   annotations:
     workflows.argoproj.io/description: |-
       Replicates the functionality of
-              example.yaml
+          example.yaml
     workflows.argoproj.io/title: example remade via hera
     workflows.diamond.ac.uk/repository: https://github.com/DiamondLightSource/python-interface-to-workflows
   labels:

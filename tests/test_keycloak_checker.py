@@ -11,7 +11,7 @@ from python_interface_to_workflows.auth.keycloak_checker import set_token_env_va
 @patch("python_interface_to_workflows.auth.keycloak_checker.generate_code_verifier")
 @patch("python_interface_to_workflows.auth.keycloak_checker.generate_code_challenge")
 @patch("python_interface_to_workflows.auth.keycloak_checker.open_auth_url")
-def test_return_key(
+def test_set_token_env_variable(
     mock_open_auth_url: MagicMock,
     mock_gen_code_challenge: MagicMock,
     mock_gen_code_verifier: MagicMock,

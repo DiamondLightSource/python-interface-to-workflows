@@ -1,6 +1,5 @@
 import os
 
-from hera.shared import global_config
 from hera.workflows import (
     DAG,
     Artifact,
@@ -12,9 +11,9 @@ from hera.workflows import (
 from hera.workflows import models as m
 from hera.workflows.archive import NoneArchiveStrategy
 
-global_config.host = os.environ.get("HOST")
-global_config.image = str(os.environ.get("IMAGE"))
-global_config.token = os.environ.get("TOKEN")
+# from python_interface_to_workflows.prepare_to_submit import prepare_to_submit
+
+# prepare_to_submit(True)
 
 
 @script(
@@ -164,7 +163,7 @@ with Workflow(
     annotations={
         "workflows.argoproj.io/title": "example remade via hera",
         "workflows.argoproj.io/description": """Replicates the functionality of
-        example.yaml""",
+    example.yaml""",
         "workflows.diamond.ac.uk/repository": "https://github.com/{{github_org}}/{{repo_name}}",
     },
     volumes=Volume(name="tmpdir", mount_path="/tmp/", size="1Gi"),
@@ -188,6 +187,8 @@ with Workflow(
             }
         )
         [install, params] >> makeimages >> makehdf5  # pyright: ignore
+
+
 with open("example.yaml", "w") as div:
     div.write(w.to_yaml())  # pyright: ignore[reportUnknownMemberType]
 
