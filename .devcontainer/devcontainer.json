@@ -53,6 +53,9 @@
         "--env-file",
         "src/.env"
     ],
+    "forwardPorts": [
+        5173
+    ],
     "portsAttributes": {
         "5173": {
             "onAutoForward": "ignore"

@@ -5,6 +5,8 @@ import webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from typing import cast
 
+import dotenv
+
 
 class _ReusingHTTPServer(HTTPServer):
     allow_reuse_address = True
@@ -26,12 +28,13 @@ class CallbackHandler(BaseHTTPRequestHandler):
             self.wfile.write(b"Missing authorization code.")
 
 
-def open_auth_url(auth_url: str) -> None:
-    httpd = _ReusingHTTPServer(("localhost", 8000), CallbackHandler)
+def open_auth_url(auth_url: str):
+    httpd = _ReusingHTTPServer(("localhost", 5173), CallbackHandler)
     webbrowser.open(auth_url)
     try:
         httpd.handle_request()
         os.environ["AUTH"] = httpd.auth_code
+        dotenv.set_key("src/.env", "AUTH", httpd.auth_code)
     except OSError:
         os.environ["AUTH"] = ""
         print("ERROR: Port in use. Please restart your terminal.")

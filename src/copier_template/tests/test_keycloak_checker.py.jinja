@@ -28,7 +28,7 @@ def test_return_key(
         "refresh_token": "fake_refresh",
     }
     assert set_token_env_variable() == "fake_token"
-    mock_open_auth_url.assert_called_once_with("https://mock.site", port)
+    mock_open_auth_url.assert_called_once_with("https://mock.site", 8000)
     keycloak.token.assert_called_once_with(
         grant_type="authorization_code",
         code="auth_url_code",
