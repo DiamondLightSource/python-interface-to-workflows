@@ -1,11 +1,12 @@
 from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
-
-
+import os
+from {{project_name}}.auth.keycloak_checker import set_token_env_variable
 def submit_to_graphql():
+    token = set_token_env_variable()
     transport = AIOHTTPTransport(
-        url="https://staging.workflows.diamond.ac.uk/graphql",
-        headers={"Authorization": "Bearer "},  # after Bearer = access token
+        url="https://workflows.diamond.ac.uk/graphql",
+        headers={"Authorization": f"Bearer {token}"},
     )
     client = Client(
         transport=transport,
