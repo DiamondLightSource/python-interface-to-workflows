@@ -20,6 +20,10 @@ dependencies = [
     "requests",
     "PyYAML",
     "python-keycloak",
+    "pillow",
+    "numpy",
+    "h5py",
+    "dotenv",
 ] # Add project dependencies here, e.g. ["click", "numpy"]
 dynamic = ["version"]
 license.file = "LICENSE"
@@ -40,6 +44,7 @@ dev = [
     "pillow",
     "numpy",
     "h5py",
+    "dotenv",
 ]
 
 [project.scripts]

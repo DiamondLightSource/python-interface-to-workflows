@@ -3,10 +3,10 @@ from unittest.mock import MagicMock, patch
 
 from pytest import mark
 
-from python_interface_to_workflows.auth.keycloak_checker import return_key
+from python_interface_to_workflows.auth.keycloak_checker import set_token_env_variable
 
 
-@mark.parametrize("dev", [True, False])
+@mark.parametrize("dev,port", [(True, 5173), (False, 8000)])
 @patch("python_interface_to_workflows.auth.keycloak_checker.KeycloakOpenID")
 @patch("python_interface_to_workflows.auth.keycloak_checker.generate_code_verifier")
 @patch("python_interface_to_workflows.auth.keycloak_checker.generate_code_challenge")
@@ -17,6 +17,7 @@ def test_return_key(
     mock_gen_code_verifier: MagicMock,
     mock_gen_keycloak_id: MagicMock,
     dev: bool,
+    port: int,
 ):
     mock_gen_code_verifier.return_value = "verifier"
     mock_gen_code_challenge.return_value = ("challenge", "S256")
@@ -29,11 +30,11 @@ def test_return_key(
         "access_token": "fake_token",
         "refresh_token": "fake_refresh",
     }
-    assert return_key(dev) == "fake_token"
-    mock_open_auth_url.assert_called_once_with("https://mock.site")
+    assert set_token_env_variable(dev) == "fake_token"
+    mock_open_auth_url.assert_called_once_with("https://mock.site", port)
     keycloak.token.assert_called_once_with(
         grant_type="authorization_code",
         code="auth_url_code",
-        redirect_uri="http://localhost:5173/",
+        redirect_uri=f"http://localhost:{port}/",
         code_verifier="verifier",
     )
