@@ -2,7 +2,7 @@
 cd "src/python_interface_to_workflows/workflow_definitions"
 
 cp *example*.py "../../copier_template/src/{{ project_name }}/workflow_definitions"
-cp ../templates/*.yaml "../../copier_template/src/{{ project_name }}/templates"
+cp ../templates/*example*.yaml "../../copier_template/src/{{ project_name }}/templates"
 
 for file in "../../copier_template/src/{{ project_name }}/workflow_definitions"/*
 do
