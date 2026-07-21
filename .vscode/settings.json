@@ -9,4 +9,5 @@
     "[python]": {
         "editor.defaultFormatter": "charliermarsh.ruff",
     },
+    "python.envFile": "${workspaceFolder}/workspaces/python-interface-to-workflows/src/.env"
 }
