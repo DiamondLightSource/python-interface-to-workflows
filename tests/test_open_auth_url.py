@@ -15,7 +15,7 @@ def test_open_auth_url_normal_function(
 ):
     server = mock_http_server.return_value
     server.auth_code = "this_is_your_code"
-    open_auth_url("url")
+    open_auth_url("url", 5173)
     server.handle_request.assert_called_once()
     mock_open_browser.assert_called_once_with("url")
     server.socket.shutdown.assert_called_once()
@@ -34,7 +34,7 @@ def test_open_auth_url_raises_error(
     server = mock_http_server.return_value
     server.auth_code = "this_is_your_code"
     server.handle_request.side_effect = OSError
-    open_auth_url("url")
+    open_auth_url("url", 5173)
     mock_open_browser.assert_called_once_with("url")
     assert os.environ["AUTH"] == ""
     mock_exit.assert_called_once_with(1)

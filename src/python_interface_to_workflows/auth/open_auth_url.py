@@ -26,8 +26,8 @@ class CallbackHandler(BaseHTTPRequestHandler):
             self.wfile.write(b"Missing authorization code.")
 
 
-def open_auth_url(auth_url: str):
-    httpd = _ReusingHTTPServer(("localhost", 5173), CallbackHandler)
+def open_auth_url(auth_url: str, port: int) -> None:
+    httpd = _ReusingHTTPServer(("localhost", port), CallbackHandler)
     webbrowser.open(auth_url)
     try:
         httpd.handle_request()
