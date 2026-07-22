@@ -152,14 +152,13 @@ def to_hdf5(paths: str):
 with Workflow(
     generate_name="hera-example-",  # when running on graphql this should be name
     entrypoint="workflowentry",
-    namespace=str(os.environ.get("NAMESPACE")),
     api_version="argoproj.io/v1alpha1",
     kind="Workflow",  # ClusterWorkflowTemplate", when on graphql
     labels={"workflows.diamond.ac.uk/science-group-examples": "true"},
     annotations={
         "workflows.argoproj.io/title": "example remade via hera",
         "workflows.argoproj.io/description": """Replicates the functionality of
-    example.yaml""",
+example.yaml""",
         "workflows.diamond.ac.uk/repository": "https://github.com/{{github_org}}/{{repo_name}}",
     },
     volumes=Volume(name="tmpdir", mount_path="/tmp/", size="1Gi"),

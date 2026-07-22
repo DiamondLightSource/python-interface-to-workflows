@@ -1,5 +1,4 @@
 import json
-import os
 
 from hera.workflows import (
     Artifact,
@@ -31,14 +30,13 @@ def do_division(a: int, b: int):
 with Workflow(
     generate_name="hera-division-",  # when running on graphql this should be name
     entrypoint="divide",
-    namespace=os.environ.get("NAMESPACE"),
     api_version="argoproj.io/v1alpha1",
     kind="Workflow",  # ClusterWorkflowTemplate", when on graphql
     labels={"workflows.diamond.ac.uk/science-group-examples": "true"},
     annotations={
         "workflows.argoproj.io/title": "Division via hera test",
         "workflows.argoproj.io/description": """Takes a numerical input and returns
-        the remainder, output float, and output string to a json file""",
+    the remainder, output float, and output string to a json file""",
         "workflows.diamond.ac.uk/repository": "https://github.com/DiamondLightSource/python-interface-to-workflows",
     },
     volumes=EmptyDirVolume(name="output-dir", mount_path="/output-dir"),
