@@ -11,10 +11,6 @@ from hera.workflows import (
 from hera.workflows import models as m
 from hera.workflows.archive import NoneArchiveStrategy
 
-# from python_interface_to_workflows.prepare_to_submit import prepare_to_submit
-
-# prepare_to_submit(True)
-
 
 @script(
     image=str(os.environ.get("IMAGE")),
@@ -191,6 +187,3 @@ with Workflow(
 
 with open("example.yaml", "w") as div:
     div.write(w.to_yaml())  # pyright: ignore[reportUnknownMemberType]
-
-
-# w.create()
