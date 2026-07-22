@@ -5,4 +5,5 @@ do
 uv run "$file"
 done
 mv *.yaml ../templates/
+mv *.txt ../templates/
 git add -u ../templates/

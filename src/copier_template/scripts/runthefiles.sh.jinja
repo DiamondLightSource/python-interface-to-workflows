@@ -1,8 +1,9 @@
 #!/bin/bash
-cd src/{{project_name}}/workflow_definitions
+cd src/python_interface_to_workflows/workflow_definitions
 for file in *
 do
 uv run "$file"
 done
 mv *.yaml ../templates/
+mv *.txt ../templates/
 git add -u ../templates/

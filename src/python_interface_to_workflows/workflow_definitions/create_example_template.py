@@ -178,5 +178,5 @@ example.yaml""",
         [install, params] >> makeimages >> makehdf5  # pyright: ignore
 
 
-with open("_example.yaml", "w") as div:
+with open("example.txt", "w") as div:
     div.write(w.to_yaml())  # pyright: ignore[reportUnknownMemberType]
