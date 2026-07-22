@@ -10,10 +10,6 @@ from hera.workflows import (
 )
 from hera.workflows import models as m
 
-# from python_interface_to_workflows.prepare_to_submit import prepare_to_submit
-
-# prepare_to_submit(True)
-
 
 @script(
     volume_mounts=[m.VolumeMount(name="output-dir", mount_path="/output-dir/")],
@@ -53,6 +49,3 @@ with Workflow(
 
 with open("divisionyaml.yaml", "w") as div:
     div.write(w.to_yaml())  # pyright: ignore[reportUnknownMemberType]
-
-
-# w.create()

@@ -33,7 +33,7 @@ spec:
       - name: json-output
         path: /output-dir/output.json
     script:
-      image: None
+      image: python:3.10
       source: |-
         import os
         import sys
