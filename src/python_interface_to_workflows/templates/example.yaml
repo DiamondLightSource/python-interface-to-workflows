@@ -2,11 +2,10 @@ apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
   generateName: hera-example-
-  namespace: None
   annotations:
     workflows.argoproj.io/description: |-
       Replicates the functionality of
-          example.yaml
+      example.yaml
     workflows.argoproj.io/title: example remade via hera
     workflows.diamond.ac.uk/repository: https://github.com/DiamondLightSource/python-interface-to-workflows
   labels:

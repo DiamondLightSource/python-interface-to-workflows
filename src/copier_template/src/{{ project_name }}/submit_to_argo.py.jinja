@@ -1,0 +1,23 @@
+import os
+from typing import cast
+
+import dotenv
+from hera.shared import global_config
+from hera.workflows import Workflow, WorkflowsService
+from hera.workflows import models as m
+
+from {{project_name}}.auth.keycloak_checker import set_token_env_variable
+
+
+def submit_workflow_to_argo(w: Workflow):
+    set_token_env_variable(staging=True)
+    dotenv.load_dotenv(dotenv_path="src/.env", override=True)
+    w.namespace = os.environ.get("NAMESPACE")
+    w.workflows_service = WorkflowsService(
+        host=str(os.environ.get("HOST")).strip("'"),
+        token=str(os.environ.get("TOKEN")).strip("'"),
+    )
+    submitted_w = cast(m.Workflow, w.create())
+    name = submitted_w.metadata.name
+    namespace = submitted_w.metadata.namespace
+    print(f"submitted {name} to {namespace}")
