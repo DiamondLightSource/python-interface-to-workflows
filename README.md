@@ -31,3 +31,24 @@ Or if it is a commandline tool then you might put some example commands here:
 ```
 python -m python_interface_to_workflows --version
 ```
+
+# Using Copier
+```bash
+mkdir new_directory_path
+cd new_directory_path
+git init 
+git remote add origin {origin ssh}
+git branch -M main
+
+cd ..
+```
+then either:
+```bash
+git clone git@github.com:DiamondLightSource/python-interface-to-workflows.git
+copier copy {this_repo's_path} {new_directory_path}
+```
+or:
+```bash
+copier copy git@github.com:DiamondLightSource/python-copier-template.git new directory path
+```
+rebuild in dev container without cache
