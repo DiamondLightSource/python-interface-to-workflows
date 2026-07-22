@@ -1,5 +1,3 @@
-import os
-
 from hera.workflows import (
     DAG,
     Artifact,
@@ -13,7 +11,6 @@ from hera.workflows.archive import NoneArchiveStrategy
 
 
 @script(
-    image=str(os.environ.get("IMAGE")),
     command=["python"],
     volume_mounts=[m.VolumeMount(name="tmpdir", mount_path="/tmp")],
 )
@@ -30,7 +27,6 @@ def install_dependencies():
 
 @script(
     command=["python"],
-    image=str(os.environ.get("IMAGE")),
     outputs=Parameter(
         name="out-parameters", value_from=m.ValueFrom(path="/tmp/parameters.json")
     ),
@@ -71,7 +67,6 @@ def generate_parameters(
 
 @script(
     command=["/tmp/venv/bin/python"],
-    image=str(os.environ.get("IMAGE")),
     volume_mounts=[m.VolumeMount(name="tmpdir", mount_path="/tmp")],
     outputs=[
         Parameter(
@@ -122,7 +117,6 @@ def create_image(
 
 @script(
     command=["/tmp/venv/bin/python"],
-    image=str(os.environ.get("IMAGE")),
     volume_mounts=[m.VolumeMount(name="tmpdir", mount_path="/tmp")],
     outputs=Artifact(
         name="hdf5output",

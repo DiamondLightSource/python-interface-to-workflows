@@ -55,7 +55,7 @@ spec:
             value: '{{tasks.create-image.outputs.parameters.out-paths}}'
   - name: install-dependencies
     script:
-      image: None
+      image: python:3.10
       source: |-
         import os
         import sys
@@ -83,7 +83,7 @@ spec:
         valueFrom:
           path: /tmp/parameters.json
     script:
-      image: None
+      image: python:3.10
       source: |-
         import os
         import sys
@@ -128,7 +128,7 @@ spec:
         valueFrom:
           path: /tmp/{{inputs.parameters.extension}}-path.json
     script:
-      image: None
+      image: python:3.10
       source: |-
         import os
         import sys
@@ -177,7 +177,7 @@ spec:
         archive:
           none: {}
     script:
-      image: None
+      image: python:3.10
       source: |-
         import os
         import sys
