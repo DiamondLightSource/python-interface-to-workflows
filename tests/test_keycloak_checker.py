@@ -1,12 +1,22 @@
 import os
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
 from pytest import mark
 
 from python_interface_to_workflows.auth.keycloak_checker import set_token_env_variable
 
 
-@mark.parametrize("dev,port", [(True, 5173), (False, 8000)])
+@mark.parametrize(
+    "staging,port,return_present",
+    [
+        (True, 5173, True),
+        (False, 8000, False),
+        (True, 5173, False),
+        (False, 8000, True),
+    ],
+)
+@patch("python_interface_to_workflows.auth.keycloak_checker.dotenv.load_dotenv")
+@patch("python_interface_to_workflows.auth.keycloak_checker.dotenv.set_key")
 @patch("python_interface_to_workflows.auth.keycloak_checker.KeycloakOpenID")
 @patch("python_interface_to_workflows.auth.keycloak_checker.generate_code_verifier")
 @patch("python_interface_to_workflows.auth.keycloak_checker.generate_code_challenge")
@@ -16,25 +26,50 @@ def test_set_token_env_variable(
     mock_gen_code_challenge: MagicMock,
     mock_gen_code_verifier: MagicMock,
     mock_gen_keycloak_id: MagicMock,
-    dev: bool,
+    mock_set_key: MagicMock,
+    mock_load_env: MagicMock,
+    staging: bool,
     port: int,
+    return_present: bool,
 ):
     mock_gen_code_verifier.return_value = "verifier"
     mock_gen_code_challenge.return_value = ("challenge", "S256")
     os.environ["AUTH"] = "auth_url_code"
+    os.environ["REFRESHTOKEN"] = "refresh"
+
     keycloak = MagicMock()
     mock_gen_keycloak_id.return_value = keycloak
-
+    mock_open_auth_url.return_value = return_present
     keycloak.auth_url.return_value = "https://mock.site"
-    keycloak.token.return_value = {
+    token = {
         "access_token": "fake_token",
         "refresh_token": "fake_refresh",
     }
-    assert set_token_env_variable(dev) == "fake_token"
+    keycloak.token.return_value = token
+    keycloak.refresh_token.return_value = token
+    keycloak.decode_token.return_value = {"exp": 123456789}
+    assert set_token_env_variable(staging) == "fake_token"
+
     mock_open_auth_url.assert_called_once_with("https://mock.site", port)
-    keycloak.token.assert_called_once_with(
-        grant_type="authorization_code",
-        code="auth_url_code",
-        redirect_uri=f"http://localhost:{port}/",
-        code_verifier="verifier",
+    if return_present:
+        keycloak.token.assert_called_once_with(
+            grant_type="authorization_code",
+            code="auth_url_code",
+            redirect_uri=f"http://localhost:{port}/",
+            code_verifier="verifier",
+        )
+        keycloak.refresh_token.assert_not_called()
+    else:
+        keycloak.refresh_token.assert_called_once_with("refresh")
+        keycloak.token.assert_not_called()
+    mock_set_key.assert_has_calls(
+        [
+            call("src/.env", "EXPIRY", str(123456789 + 1500)),
+            call("src/.env", "TOKEN", "fake_token"),
+            call("src/.env", "REFRESHTOKEN", "fake_refresh"),
+        ]
+    )
+    mock_load_env.assert_called_once_with(
+        dotenv_path="src/.env",
+        override=True,
     )

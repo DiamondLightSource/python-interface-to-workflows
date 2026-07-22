@@ -7,15 +7,26 @@ from keycloak.pkce_utils import generate_code_challenge, generate_code_verifier
 from {{project_name}}.auth.open_auth_url import open_auth_url
 
 
-def set_token_env_variable() -> str:
-    keycloak_openid = KeycloakOpenID(
-        client_id="workflows-dashboard",
-        server_url="https://identity.diamond.ac.uk/",
-        realm_name="dls",
-        client_secret_key="",
-        pool_maxsize=1,
-    )
-    port = 8000
+def set_token_env_variable(staging: bool) -> str:
+    match staging:
+        case True:
+            keycloak_openid = KeycloakOpenID(
+                server_url="https://identity-test.diamond.ac.uk/",
+                client_id="workflows-ui-dev",
+                realm_name="dls",
+                client_secret_key="",
+                pool_maxsize=1,
+            )
+            port = 5173
+        case False:
+            keycloak_openid = KeycloakOpenID(
+                client_id="workflows-dashboard",
+                server_url="https://identity.diamond.ac.uk/",
+                realm_name="dls",
+                client_secret_key="",
+                pool_maxsize=1,
+            )
+            port = 8000
     code_verifier = generate_code_verifier()
     code_challenge, code_challenge_method = generate_code_challenge(code_verifier)
     auth_url = keycloak_openid.auth_url(
@@ -25,14 +36,26 @@ def set_token_env_variable() -> str:
         code_challenge=code_challenge,
         code_challenge_method=code_challenge_method,
     )
-    open_auth_url(auth_url)
-    token: dict[str, str] = (  # pyright: ignore[reportUnknownVariableType]
-        keycloak_openid.token(  # pyright: ignore[reportUnknownMemberType]
-            grant_type="authorization_code",
-            code=os.environ["AUTH"],
-            redirect_uri=f"http://localhost:{port}/",
-            code_verifier=code_verifier,
-        )
+    match open_auth_url(auth_url, port):
+        case True:
+            token: dict[str, str] = (  # pyright: ignore[reportUnknownVariableType]
+                keycloak_openid.token(  # pyright: ignore[reportUnknownMemberType]
+                    grant_type="authorization_code",
+                    code=os.environ.get("AUTH"),  # pyright: ignore
+                    redirect_uri=f"http://localhost:{port}/",
+                    code_verifier=code_verifier,
+                )
+            )
+        case False:
+            token: dict[str, str] = keycloak_openid.refresh_token(  # pyright: ignore
+                str(os.environ.get("REFRESHTOKEN"))  # pyright: ignore
+            )
+    token_info: dict[str, int | str | dict[str, list[str]]] = (  # pyright: ignore
+        keycloak_openid.decode_token(token["access_token"])  # pyright: ignore
     )
+    expire_time = int(token_info["exp"]) + 1500  # pyright: ignore
+    dotenv.set_key("src/.env", "EXPIRY", str(expire_time).strip("'"))
     dotenv.set_key("src/.env", "TOKEN", token["access_token"].strip("'"))
+    dotenv.set_key("src/.env", "REFRESHTOKEN", token["refresh_token"].strip("'"))
+    dotenv.load_dotenv(dotenv_path="src/.env", override=True)
     return token["access_token"]  # pyright: ignore[reportUnknownArgumentType]
