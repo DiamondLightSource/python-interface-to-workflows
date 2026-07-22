@@ -31,8 +31,7 @@ class CallbackHandler(BaseHTTPRequestHandler):
 
 def open_auth_url(auth_url: str, port: int) -> bool:
     dotenv.load_dotenv(dotenv_path="src/.env", override=True)
-    expiry_str: str = os.environ.get("EXPIRY")  # pyright: ignore
-    print(f"expiry_str: {expiry_str}", str(time.time()))
+    expiry_str: str = os.environ.get("EXPIRY").strip("'")  # pyright: ignore
     if (expiry_str == "" or int(expiry_str)) <= float(time.time()):
         httpd = _ReusingHTTPServer(("localhost", port), CallbackHandler)
         webbrowser.open(auth_url)
@@ -49,5 +48,4 @@ def open_auth_url(auth_url: str, port: int) -> bool:
             httpd.server_close()
         return True
     else:
-        print("using refresh token")
         return False

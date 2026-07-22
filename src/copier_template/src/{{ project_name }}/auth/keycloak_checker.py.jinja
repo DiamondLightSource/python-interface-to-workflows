@@ -7,26 +7,15 @@ from keycloak.pkce_utils import generate_code_challenge, generate_code_verifier
 from {{project_name}}.auth.open_auth_url import open_auth_url
 
 
-def set_token_env_variable(staging: bool) -> str:
-    match staging:
-        case True:
-            keycloak_openid = KeycloakOpenID(
-                server_url="https://identity-test.diamond.ac.uk/",
-                client_id="workflows-ui-dev",
-                realm_name="dls",
-                client_secret_key="",
-                pool_maxsize=1,
-            )
-            port = 5173
-        case False:
-            keycloak_openid = KeycloakOpenID(
-                client_id="workflows-dashboard",
+def set_token_env_variable() -> str:
+    keycloak_openid = KeycloakOpenID(
+                client_id="workflows-cli",
                 server_url="https://identity.diamond.ac.uk/",
                 realm_name="dls",
                 client_secret_key="",
                 pool_maxsize=1,
             )
-            port = 8000
+    port = 8000
     code_verifier = generate_code_verifier()
     code_challenge, code_challenge_method = generate_code_challenge(code_verifier)
     auth_url = keycloak_openid.auth_url(

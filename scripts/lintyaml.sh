@@ -1,6 +1,6 @@
 #!/bin/bash
 cd src/python_interface_to_workflows/templates
-for file in *
+for file in *.yaml;
 do
 argo lint "$file" --offline
 SUCCESSFULLINT=$?

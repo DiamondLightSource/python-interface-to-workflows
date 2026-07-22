@@ -7,16 +7,36 @@ cp ../templates/*example*.txt "../../copier_template/src/{{ project_name }}/temp
 for file in "../../copier_template/src/{{ project_name }}/workflow_definitions"/*
 do
     [[ $file == *.jinja ]] && continue
+
     sed -i 's/python-interface-to-workflows/{{repo_name}}/g' "$file"
     sed -i 's/DiamondLightSource/{{github_org}}/g' "$file"
+
+    sed -i '1i{% raw %}' "$file"
+    echo '{% endraw %}' >> "$file"
+
+    sed -i \
+        -e 's/{{repo_name}}/{% endraw %}{{repo_name}}{% raw %}/g' \
+        -e 's/{{github_org}}/{% endraw %}{{github_org}}{% raw %}/g' \
+        "$file"
+
     mv "$file" "$file.jinja"
 done
 
 for file in "../../copier_template/src/{{ project_name }}/templates"/*
 do
     [[ $file == *.jinja ]] && continue
+
     sed -i 's/python-interface-to-workflows/{{repo_name}}/g' "$file"
     sed -i 's/DiamondLightSource/{{github_org}}/g' "$file"
+
+    sed -i '1i{% raw %}' "$file"
+    echo '{% endraw %}' >> "$file"
+
+    sed -i \
+        -e 's/{{repo_name}}/{% endraw %}{{repo_name}}{% raw %}/g' \
+        -e 's/{{github_org}}/{% endraw %}{{github_org}}{% raw %}/g' \
+        "$file"
+
     mv "$file" "$file.jinja"
 done
 git add "../../copier_template/src/{{ project_name }}/workflow_definitions"/*
