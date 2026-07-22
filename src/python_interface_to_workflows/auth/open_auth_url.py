@@ -1,5 +1,6 @@
 import os
 import socket
+import time
 import urllib.parse
 import webbrowser
 from http.server import BaseHTTPRequestHandler, HTTPServer
@@ -28,17 +29,25 @@ class CallbackHandler(BaseHTTPRequestHandler):
             self.wfile.write(b"Missing authorization code.")
 
 
-def open_auth_url(auth_url: str, port: int) -> None:
-    httpd = _ReusingHTTPServer(("localhost", port), CallbackHandler)
-    webbrowser.open(auth_url)
-    try:
-        httpd.handle_request()
-        os.environ["AUTH"] = httpd.auth_code
-        dotenv.set_key("src/.env", "AUTH", httpd.auth_code)
-    except OSError:
-        os.environ["AUTH"] = ""
-        print("ERROR: Port in use. Please restart your terminal.")
-        exit(1)
-    finally:
-        httpd.socket.shutdown(socket.SHUT_RDWR)
-        httpd.server_close()
+def open_auth_url(auth_url: str, port: int) -> bool:
+    dotenv.load_dotenv(dotenv_path="src/.env", override=True)
+    expiry_str: str = os.environ.get("EXPIRY")  # pyright: ignore
+    print(f"expiry_str: {expiry_str}", str(time.time()))
+    if (expiry_str == "" or int(expiry_str)) <= float(time.time()):
+        httpd = _ReusingHTTPServer(("localhost", port), CallbackHandler)
+        webbrowser.open(auth_url)
+        try:
+            httpd.handle_request()
+            os.environ["AUTH"] = httpd.auth_code
+            dotenv.set_key("src/.env", "AUTH", httpd.auth_code)
+        except OSError:
+            os.environ["AUTH"] = ""
+            print("ERROR: Port in use. Please restart your terminal.")
+            exit(1)
+        finally:
+            httpd.socket.shutdown(socket.SHUT_RDWR)
+            httpd.server_close()
+        return True
+    else:
+        print("using refresh token")
+        return False
