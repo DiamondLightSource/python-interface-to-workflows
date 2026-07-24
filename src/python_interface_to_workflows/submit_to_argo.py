@@ -17,7 +17,7 @@ def submit_workflow_to_argo(w: Workflow):
         host=str(os.environ.get("HOST")).strip("'"),
         token=str(os.environ.get("TOKEN")).strip("'"),
     )
-    global_config.image = str(os.environ.get("IMAGE"))
+    global_config.image = str(os.environ.get("DEFAULT_IMAGE"))
     submitted_w = cast(m.Workflow, w.create())
     name = submitted_w.metadata.name
     namespace = submitted_w.metadata.namespace

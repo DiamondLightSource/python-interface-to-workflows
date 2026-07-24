@@ -53,14 +53,6 @@
         "--env-file",
         "src/.env"
     ],
-    "forwardPorts": [
-        5173
-    ],
-    "portsAttributes": {
-        "5173": {
-            "onAutoForward": "ignore"
-        }
-    },
     "mounts": [
         // Mount in the user terminal config folder so it can be edited
         {

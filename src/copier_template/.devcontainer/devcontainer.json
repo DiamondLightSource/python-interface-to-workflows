@@ -53,9 +53,6 @@
         "--env-file",
         "src/.env"
     ],
-    "forwardPorts": [
-        5173
-    ],
     "mounts": [
         // Mount in the user terminal config folder so it can be edited
         {
