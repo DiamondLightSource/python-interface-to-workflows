@@ -20,7 +20,7 @@ def set_token_env_variable(staging: bool) -> str:
             port = 5173
         case False:
             keycloak_openid = KeycloakOpenID(
-                client_id="workflows-dashboard",
+                client_id="workflows-cli",
                 server_url="https://identity.diamond.ac.uk/",
                 realm_name="dls",
                 client_secret_key="",
