@@ -30,7 +30,7 @@ ENV UV_PYTHON_INSTALL_DIR=/python
 
 # Sync the project without its dev dependencies
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --locked --no-editable --no-dev --managed-python
+    uv sync --locked --no-dev --no-editable --managed-python
 
 # The runtime stage copies the built venv into a runtime container
 FROM ubuntu:resolute AS runtime
@@ -43,7 +43,7 @@ FROM ubuntu:resolute AS runtime
 # Copy the python installation from the build stage
 COPY --from=build /python /python
 
-# Copy the environment, but not the source code
+# Copy the environment, and the source code
 COPY --from=build /app/.venv /app/.venv
 ENV PATH=/app/.venv/bin:$PATH
 
