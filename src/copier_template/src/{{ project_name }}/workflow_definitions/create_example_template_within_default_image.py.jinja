@@ -1,3 +1,4 @@
+{% raw %}
 import os
 
 from hera.shared import global_config
@@ -146,7 +147,7 @@ with Workflow(
         "workflows.argoproj.io/title": "example remade via hera",
         "workflows.argoproj.io/description": """Replicates the functionality of
 example.yaml""",
-        "workflows.diamond.ac.uk/repository": "https://github.com/{{github_org}}/{{repo_name}}",
+        "workflows.diamond.ac.uk/repository": "https://github.com/{% endraw %}{{github_org}}{% raw %}/{% endraw %}{{repo_name}}{% raw %}",
     },
     volumes=Volume(name="tmpdir", mount_path="/tmp/", size="1Gi"),
 ) as w:
@@ -170,3 +171,4 @@ example.yaml""",
         params >> makeimages >> makehdf5  # pyright: ignore
 with open("example_in_image.txt", "w") as div:
     div.write(w.to_yaml())  # pyright: ignore[reportUnknownMemberType]
+{% endraw %}
