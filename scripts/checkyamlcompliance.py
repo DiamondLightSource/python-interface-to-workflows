@@ -24,6 +24,8 @@ for file in yamllist:
         api_ver = False
     if "kind" in yamldata.keys():
         match yamldata["kind"]:
+            case "ClusterWorkflowTemplate":
+                clst_tmpt = True
             case "Workflow":
                 clst_tmpt = True
             case "WorkflowTemplate":

@@ -28,7 +28,7 @@ def do_division(a: int, b: int):
 
 
 with Workflow(
-    generate_name="hera-division-",  # when running on graphql this should be name
+    name="hera-division",  # when running on argo this should be generate_name: ...-
     entrypoint="divide",
     api_version="argoproj.io/v1alpha1",
     kind="WorkflowTemplate",  # ClusterWorkflowTemplate", when on graphql

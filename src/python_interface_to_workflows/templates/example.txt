@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: WorkflowTemplate
 metadata:
-  generateName: hera-example-
+  name: hera-example
   annotations:
     workflows.argoproj.io/description: |-
       Replicates the functionality of
