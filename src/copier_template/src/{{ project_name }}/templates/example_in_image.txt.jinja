@@ -1,3 +1,4 @@
+{% raw %}
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
@@ -7,7 +8,7 @@ metadata:
       Replicates the functionality of
       example.yaml
     workflows.argoproj.io/title: example remade via hera
-    workflows.diamond.ac.uk/repository: https://github.com/{{github_org}}/{{repo_name}}
+    workflows.diamond.ac.uk/repository: https://github.com/{% endraw %}{{github_org}}{% raw %}/{% endraw %}{{repo_name}}{% raw %}
   labels:
     workflows.diamond.ac.uk/science-group-examples: 'true'
 spec:
@@ -65,7 +66,7 @@ spec:
         valueFrom:
           path: /tmp/parameters.json
     script:
-      image: ghcr.io/matt-carre/{{repo_name}}-default-image
+      image: ghcr.io/matt-carre/{% endraw %}{{repo_name}}{% raw %}-default-image
       source: |-
         import os
         import sys
@@ -110,7 +111,7 @@ spec:
         valueFrom:
           path: /tmp/{{inputs.parameters.extension}}-path.json
     script:
-      image: ghcr.io/matt-carre/{{repo_name}}-default-image
+      image: ghcr.io/matt-carre/{% endraw %}{{repo_name}}{% raw %}-default-image
       source: |-
         import os
         import sys
@@ -159,7 +160,7 @@ spec:
         archive:
           none: {}
     script:
-      image: ghcr.io/matt-carre/{{repo_name}}-default-image
+      image: ghcr.io/matt-carre/{% endraw %}{{repo_name}}{% raw %}-default-image
       source: |-
         import os
         import sys
@@ -194,3 +195,4 @@ spec:
       resources:
         requests:
           storage: 1Gi
+{% endraw %}
