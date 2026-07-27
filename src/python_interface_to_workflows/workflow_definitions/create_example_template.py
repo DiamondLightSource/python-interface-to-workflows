@@ -144,7 +144,7 @@ def to_hdf5(paths: str):
 
 
 with Workflow(
-    generate_name="hera-example-",  # when running on graphql this should be name
+    name="hera-example",  # when running on argo this should be generate_name: ...-
     entrypoint="workflowentry",
     api_version="argoproj.io/v1alpha1",
     kind="WorkflowTemplate",  # ClusterWorkflowTemplate", when on graphql
