@@ -43,7 +43,7 @@ FROM ubuntu:resolute AS runtime
 # Copy the python installation from the build stage
 COPY --from=build /python /python
 
-# Copy the environment, and the source code
+# Copy the environment, but not the source code
 COPY --from=build /app/.venv /app/.venv
 ENV PATH=/app/.venv/bin:$PATH
 
