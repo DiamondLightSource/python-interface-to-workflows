@@ -1,4 +1,5 @@
-{% raw %}{
+{% raw %}
+{
  "cells": [
   {
    "cell_type": "markdown",
@@ -7,7 +8,7 @@
    "source": [
     "# Running in VSCode:\n",
     "\n",
-    "1. Set kernal to python-interface-to-workflows 3.11.x\n",
+    "1. Set kernal to {% endraw %}{{repo_name}}{% raw %} 3.11.x\n",
     "2. Hit F1, run Jupyter: Import Notebook to Script\n",
     "3. Click notebook_division.ipynb\n",
     "4. Run the cells sequentially"
@@ -59,7 +60,7 @@
     "        \"workflows.argoproj.io/title\": \"Division via hera test\",\n",
     "        \"workflows.argoproj.io/description\": \"\"\"Takes a numerical input and returns\n",
     "    the remainder, output float, and output string to a json file\"\"\",\n",
-    "        \"workflows.diamond.ac.uk/repository\": \"https://github.com/DiamondLightSource/python-interface-to-workflows\",\n",
+    "        \"workflows.diamond.ac.uk/repository\": \"https://github.com/{% endraw %}{{github_org}}{% raw %}/{% endraw %}{{repo_name}}{% raw %}\",\n",
     "    },\n",
     "    volumes=EmptyDirVolume(name=\"output-dir\", mount_path=\"/output-dir\"),\n",
     ") as w:\n",
@@ -75,7 +76,7 @@
    "metadata": {},
    "outputs": [],
    "source": [
-    "with open(\"division_from_jupyter.yaml\", \"w\") as div:\n",
+    "with open(\"division_from_jupyter.txt\", \"w\") as div:\n",
     "    div.write(w.to_yaml())  # pyright: ignore[reportUnknownMemberType]"
    ]
   },
@@ -84,16 +85,17 @@
    "execution_count": null,
    "id": "7e9f88cb",
    "metadata": {},
+   "outputs": [],
    "source": [
-    "from {% endraw %}{{project_name}}{% raw %}.submit_to_argo import submit_workflow_to_argo\n",
+    "from {% endraw %}{{project_name}}{% raw %}.submit_workflow import submit_workflow\n",
     "\n",
-    "submit_workflow_to_argo(w)"
+    "submit_workflow(w)"
    ]
   }
  ],
  "metadata": {
   "kernelspec": {
-   "display_name": "python-interface-to-workflows (3.11.x)",
+   "display_name": "{% endraw %}{{repo_name}}{% raw %} (3.11.x)",
    "language": "python",
    "name": "python3"
   },

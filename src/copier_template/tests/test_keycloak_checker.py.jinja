@@ -45,7 +45,7 @@ def test_set_token_env_variable(
     keycloak.token.return_value = token
     keycloak.refresh_token.return_value = token
     keycloak.decode_token.return_value = {"exp": 123456789}
-    assert set_token_env_variable(staging) == "fake_token"
+    assert set_token_env_variable() == "fake_token"
 
     mock_token_expired.assert_called_once_with("https://mock.site", port)
     if return_present:
