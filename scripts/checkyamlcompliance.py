@@ -26,6 +26,10 @@ for file in yamllist:
         match yamldata["kind"]:
             case "Workflow":
                 clst_tmpt = True
+            case "WorkflowTemplate":
+                clst_tmpt = True
+            case "ClusterWorkflowTemplate":
+                clst_tmpt = True
             case _:
                 clst_tmpt = False
     else:

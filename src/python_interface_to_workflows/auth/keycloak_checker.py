@@ -1,10 +1,20 @@
 import os
+from typing import TypedDict, cast
 
 import dotenv
 from keycloak import KeycloakOpenID
 from keycloak.pkce_utils import generate_code_challenge, generate_code_verifier
 
-from python_interface_to_workflows.auth.open_auth_url import open_auth_url
+from python_interface_to_workflows.auth.open_auth_url import token_expired
+
+
+class TokenResponse(TypedDict):
+    access_token: str
+    refresh_token: str
+
+
+class DecodedToken(TypedDict):
+    exp: int
 
 
 def set_token_env_variable(staging: bool) -> str:
@@ -36,26 +46,38 @@ def set_token_env_variable(staging: bool) -> str:
         code_challenge=code_challenge,
         code_challenge_method=code_challenge_method,
     )
-    match open_auth_url(auth_url, port):
-        case True:
-            token: dict[str, str] = (  # pyright: ignore[reportUnknownVariableType]
-                keycloak_openid.token(  # pyright: ignore[reportUnknownMemberType]
-                    grant_type="authorization_code",
-                    code=os.environ.get("AUTH"),  # pyright: ignore
-                    redirect_uri=f"http://localhost:{port}/",
-                    code_verifier=code_verifier,
-                )
-            )
-        case False:
-            token: dict[str, str] = keycloak_openid.refresh_token(  # pyright: ignore
-                str(os.environ.get("REFRESHTOKEN"))  # pyright: ignore
-            )
-    token_info: dict[str, int | str | dict[str, list[str]]] = (  # pyright: ignore
-        keycloak_openid.decode_token(token["access_token"])  # pyright: ignore
+    if token_expired(auth_url, port):
+        token = cast(
+            TokenResponse,
+            keycloak_openid.token(  # pyright: ignore[reportUnknownMemberType]
+                grant_type="authorization_code",
+                code=str(os.environ.get("AUTH")),
+                redirect_uri=f"http://localhost:{port}/",
+                code_verifier=code_verifier,
+            ),
+        )
+    else:
+        token = cast(
+            TokenResponse,
+            keycloak_openid.refresh_token(  # pyright: ignore[reportUnknownMemberType]
+                str(os.environ.get("REFRESHTOKEN"))
+            ),
+        )
+    token_info = cast(
+        DecodedToken,
+        keycloak_openid.decode_token(  # pyright: ignore[reportUnknownMemberType]
+            token["access_token"]
+        ),
     )
-    expire_time = int(token_info["exp"]) + 1500  # pyright: ignore
-    dotenv.set_key("src/.env", "EXPIRY", str(expire_time).strip("'"))
-    dotenv.set_key("src/.env", "TOKEN", token["access_token"].strip("'"))
-    dotenv.set_key("src/.env", "REFRESHTOKEN", token["refresh_token"].strip("'"))
-    dotenv.load_dotenv(dotenv_path="src/.env", override=True)
-    return token["access_token"]  # pyright: ignore[reportUnknownArgumentType]
+    try:
+        expire_time = int(token_info["exp"]) + 1800
+        dotenv.set_key("src/.env", "EXPIRY", str(expire_time))
+        dotenv.set_key("src/.env", "TOKEN", token["access_token"].strip("'"))
+        dotenv.set_key("src/.env", "REFRESHTOKEN", token["refresh_token"].strip("'"))
+    except AttributeError:
+        print("ERROR:")
+        exit(1)
+    finally:
+        dotenv.load_dotenv(dotenv_path="src/.env", override=True)
+
+    return token["access_token"]
