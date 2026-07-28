@@ -1,13 +1,13 @@
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, call, patch
 
-from python_interface_to_workflows.submit_to_graphql import submit_workflow_to_graphql
+from python_interface_to_workflows.submit_workflow import submit_workflow
 
 
-@patch("python_interface_to_workflows.submit_to_argo.os.environ.get")
-@patch("python_interface_to_workflows.submit_to_argo.dotenv.load_dotenv")
-@patch("python_interface_to_workflows.submit_to_argo.Workflow")
-@patch("python_interface_to_workflows.submit_to_graphql.set_token_env_variable")
-@patch("python_interface_to_workflows.submit_to_graphql.Client")
+@patch("python_interface_to_workflows.submit_workflow.os.environ.get")
+@patch("python_interface_to_workflows.submit_workflow.dotenv.load_dotenv")
+@patch("python_interface_to_workflows.submit_workflow.Workflow")
+@patch("python_interface_to_workflows.submit_workflow.set_token_env_variable")
+@patch("python_interface_to_workflows.submit_workflow.Client")
 def test_submit_workflow_to_graphql(
     mock_client: MagicMock,
     mock_key: MagicMock,
@@ -20,8 +20,8 @@ def test_submit_workflow_to_graphql(
     mock_key.return_value = "token"
     mock_client.return_value = mock_instance
     mock_instance.execute.return_value = {"submitWorkflow": {"name": "workflow123"}}
-    submit_workflow_to_graphql(mock_workflow)
+    submit_workflow(mock_workflow)
     mock_load_env.assert_called_once_with(dotenv_path="src/.env", override=True)
     mock_instance.execute.assert_called_once()
     mock_workflow.to_yaml.assert_called_once()
-    mock_os_get.assert_called_once_with("NAMESPACE")
+    mock_os_get.assert_has_calls([call("NAMESPACE"), call("HOST")], any_order=True)

@@ -11,16 +11,16 @@ AUTH=
 
 3. Build the dev container
 
-# Submitting a workflow to Argo
+# Submitting a workflow
 1. At the start of your workflow definition file, add:
 
 ```python
-from {{project_name}}.submit_to_argo import submit_workflow_to_argo
+from {{project_name}}.submit_to_graphql import submit_workflow
 ```
 
 2. At the end of a workflow definition file, once your workflow (w) is created, add:
 ```python
-submit_workflow_to_argo(w)
+submit_workflow(w)
 ```
 
 NOTE: Be sure to remove this line upon commiting changes, as all workflow definition files are 
