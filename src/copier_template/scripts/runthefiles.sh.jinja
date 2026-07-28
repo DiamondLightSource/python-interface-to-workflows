@@ -2,8 +2,8 @@
 cd src/{{project_name}}/workflow_definitions
 for file in *
 do
+[[ -d "$file" ]] && continue
 uv run "$file"
 done
-mv *.yaml ../templates/
-mv *.txt ../templates/
-git add -u ../templates/
+mv *.txt src/{{project_name}}/templates/
+git add -u src/{{project_name}}/templates/

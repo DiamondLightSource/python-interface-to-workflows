@@ -40,8 +40,15 @@
                 "ryanluker.vscode-coverage-gutters",
                 "charliermarsh.ruff",
                 "ms-azuretools.vscode-docker",
-                "ms-toolsai.jupyter-keymap",
-                "ms-toolsai.jupyter"
+                "ms-python.debugpy",
+                "ms-python.vscode-python-envs",
+                "ms-python.vscode-pylance",
+                "ms-toolsai.vscode-jupyter-slideshow",
+                "ms-toolsai.vscode-jupyter-cell-tags",
+                "ms-toolsai.jupyter-renderers",
+                "ms-toolsai.jupyter",
+                "ms-azuretools.vscode-containers",
+                "ms-toolsai.jupyter-keymap"
             ]
         }
     },

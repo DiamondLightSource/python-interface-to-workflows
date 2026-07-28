@@ -45,5 +45,5 @@ with Workflow(
         do_division(name="first", arguments={"a": 2, "b": 5})
 
 
-with open("divisionyaml.yaml", "w") as div:
+with open("divisionyaml.txt", "w") as div:
     div.write(w.to_yaml())  # pyright: ignore[reportUnknownMemberType]
