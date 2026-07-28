@@ -31,7 +31,7 @@ with Workflow(
     generate_name="hera-division-",  # when running on graphql this should be name
     entrypoint="divide",
     api_version="argoproj.io/v1alpha1",
-    kind="Workflow",  # ClusterWorkflowTemplate", when on graphql
+    kind="WorkflowTemplate",  # ClusterWorkflowTemplate", when on graphql
     labels={"workflows.diamond.ac.uk/science-group-examples": "true"},
     annotations={
         "workflows.argoproj.io/title": "Division via hera test",

@@ -12,7 +12,7 @@ from python_interface_to_workflows.auth.keycloak_checker import set_token_env_va
 def submit_workflow_to_argo(w: Workflow):
     set_token_env_variable(staging=True)
     dotenv.load_dotenv(dotenv_path="src/.env", override=True)
-    w.namespace = os.environ.get("NAMESPACE")
+    w.namespace = os.environ.get("VISIT")
     w.workflows_service = WorkflowsService(
         host=str(os.environ.get("HOST")).strip("'"),
         token=str(os.environ.get("TOKEN")).strip("'"),

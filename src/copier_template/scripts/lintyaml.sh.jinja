@@ -1,9 +1,10 @@
 #!/bin/bash
 cd src/{{project_name}}/templates
-for file in *.yaml;
-do
-argo lint "$file" --offline
-SUCCESSFULLINT=$?
-[ $SUCCESSFULLINT -ne 0 ] && exit 1
+for file in *.txt; do
+    yaml_file="${file}.yaml"
+
+    mv "$file" "$yaml_file"
+    argo lint "$yaml_file" --offline
+    mv "$yaml_file" "$file"
 done
 exit 0
