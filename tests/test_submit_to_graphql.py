@@ -24,4 +24,4 @@ def test_submit_workflow_to_graphql(
     mock_load_env.assert_called_once_with(dotenv_path="src/.env", override=True)
     mock_instance.execute.assert_called_once()
     mock_workflow.to_yaml.assert_called_once()
-    mock_os_get.assert_has_calls([call("NAMESPACE"), call("HOST")], any_order=True)
+    mock_os_get.assert_has_calls([call("VISIT"), call("HOST")], any_order=True)
