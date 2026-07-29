@@ -8,7 +8,7 @@ from hera.workflows import Workflow
 from python_interface_to_workflows.auth.keycloak_checker import set_token_env_variable
 
 
-def submit_workflow(w: Workflow):
+async def submit_workflow(w: Workflow):
     yamlstr = w.to_yaml()  # pyright:ignore
     dotenv.load_dotenv(dotenv_path="src/.env", override=True)
     token: str = set_token_env_variable(True)
@@ -33,7 +33,7 @@ mutation Submit($visit: VisitInput!, $manifest: String!) {
   }
 }
 """)
-    result = client.execute(
+    result = await client.execute_async(
         mutation,
         variable_values={
             "visit": {
