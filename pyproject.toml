@@ -24,6 +24,7 @@ dependencies = [
     "h5py",
     "dotenv",
     "python-keycloak",
+    "pytest-asyncio",
 ] # Add project dependencies here, e.g. ["click", "numpy"]
 dynamic = ["version"]
 license.file = "LICENSE"
@@ -46,6 +47,7 @@ dev = [
     "h5py",
     "dotenv",
     "python-keycloak",
+    "pytest-asyncio",
 ]
 
 [project.scripts]
