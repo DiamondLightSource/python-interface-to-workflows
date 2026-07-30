@@ -1,7 +1,12 @@
+import json
+import os
+
+from hera.shared import global_config
 from hera.workflows import (
     DAG,
     Artifact,
     Parameter,
+    Script,
     Volume,
     Workflow,
     script,  # pyright: ignore[reportUnknownVariableType]
@@ -9,20 +14,9 @@ from hera.workflows import (
 from hera.workflows import models as m
 from hera.workflows.archive import NoneArchiveStrategy
 
-
-@script(
-    command=["python"],
-    volume_mounts=[m.VolumeMount(name="tmpdir", mount_path="/tmp")],
+global_config.set_class_defaults(  # pyright: ignore
+    Script, image=str(os.environ.get("DEFAULT_IMAGE"))
 )
-def install_dependencies():
-    import subprocess
-
-    print("creating venv")
-
-    subprocess.check_call(["python", "-m", "venv", "/tmp/venv"])
-    subprocess.check_call(
-        ["/tmp/venv/bin/pip", "install", "pillow", "h5py", "numpy", "hera"]
-    )
 
 
 @script(
@@ -66,7 +60,7 @@ def generate_parameters(
 
 
 @script(
-    command=["/tmp/venv/bin/python"],
+    command=["python"],
     volume_mounts=[m.VolumeMount(name="tmpdir", mount_path="/tmp")],
     outputs=[
         Parameter(
@@ -116,7 +110,7 @@ def create_image(
 
 
 @script(
-    command=["/tmp/venv/bin/python"],
+    command=["python"],
     volume_mounts=[m.VolumeMount(name="tmpdir", mount_path="/tmp")],
     outputs=Artifact(
         name="hdf5output",
@@ -144,10 +138,37 @@ def to_hdf5(paths: str):
 
 
 with Workflow(
-    name="hera-example",  # when running on argo this should be generate_name: ...-
+    pod_spec_patch=json.dumps(
+        {
+            "containers": [
+                {
+                    "name": "main",
+                    "resources": {
+                        "limits": {
+                            "cpu": "1",
+                            "memory": "1Gi",
+                        },
+                        "requests": {
+                            "cpu": "1",
+                            "memory": "1Gi",
+                        },
+                    },
+                }
+            ]
+        }
+    ),
+    tolerations=[
+        m.Toleration(
+            key="nodetype", operator="Equal", value="gpu", effect="NoSchedule"
+        ),
+        m.Toleration(
+            key="nodegroup", operator="Equal", value="workflows", effect="NoSchedule"
+        ),
+    ],
+    name="hera-example",
     entrypoint="workflowentry",
     api_version="argoproj.io/v1alpha1",
-    kind="WorkflowTemplate",  # ClusterWorkflowTemplate", when on graphql
+    kind="WorkflowTemplate",
     labels={"workflows.diamond.ac.uk/science-group-examples": "true"},
     annotations={
         "workflows.argoproj.io/title": "example remade via hera",
@@ -158,7 +179,6 @@ example.yaml""",
     volumes=Volume(name="tmpdir", mount_path="/tmp/", size="1Gi"),
 ) as w:
     with DAG(name="workflowentry"):
-        install = install_dependencies(name="install")
         params = generate_parameters(
             name="params",
             arguments={
@@ -175,8 +195,8 @@ example.yaml""",
                 "paths": makeimages.get_parameter("out-paths"),
             }
         )
-        [install, params] >> makeimages >> makehdf5  # pyright: ignore
+        params >> makeimages >> makehdf5  # pyright: ignore
 
 
-with open("example.txt", "w") as div:
+with open("src/python_interface_to_workflows/templates/example.txt", "w") as div:
     div.write(w.to_yaml())  # pyright: ignore[reportUnknownMemberType]
