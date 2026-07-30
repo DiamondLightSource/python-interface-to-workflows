@@ -17,6 +17,9 @@ jobs:
   commit-lint:
     uses: ./.github/workflows/_commit_msg.yml
 
+  updateimage:
+    uses: ./.github/workflows/_update_image.yml
+
   test:
     strategy:
       matrix:
