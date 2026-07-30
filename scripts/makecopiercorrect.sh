@@ -11,6 +11,7 @@ do
 
     sed -i 's/python-interface-to-workflows/{{repo_name}}/g' "$file"
     sed -i 's/DiamondLightSource/{{github_org}}/g' "$file"
+    sed -i 's/python_interface_to_workflows/{{project_name}}/g' "$file"
 
     sed -i '1i{% raw %}' "$file"
     echo '{% endraw %}' >> "$file"
@@ -18,6 +19,7 @@ do
     sed -i \
         -e 's/{{repo_name}}/{% endraw %}{{repo_name}}{% raw %}/g' \
         -e 's/{{github_org}}/{% endraw %}{{github_org}}{% raw %}/g' \
+        -e 's/{{project_name}}/{% endraw %}{{project_name}}{% raw %}/g' \
         "$file"
 
     mv "$file" "$file.jinja"
@@ -30,12 +32,14 @@ do
     sed -i 's/python-interface-to-workflows/{{repo_name}}/g' "$file"
     sed -i 's/DiamondLightSource/{{github_org}}/g' "$file"
 
+    sed -i 's/python_interface_to_workflows/{{project_name}}/g' "$file"
     sed -i '1i{% raw %}' "$file"
     echo '{% endraw %}' >> "$file"
 
     sed -i \
         -e 's/{{repo_name}}/{% endraw %}{{repo_name}}{% raw %}/g' \
         -e 's/{{github_org}}/{% endraw %}{{github_org}}{% raw %}/g' \
+        -e 's/{{project_name}}/{% endraw %}{{project_name}}{% raw %}/g' \
         "$file"
 
 
@@ -48,13 +52,14 @@ do
 
     sed -i 's/python-interface-to-workflows/{{repo_name}}/g' "$file"
     sed -i 's/DiamondLightSource/{{github_org}}/g' "$file"
-
+    sed -i 's/python_interface_to_workflows/{{project_name}}/g' "$file"
     sed -i '1i{% raw %}' "$file"
     echo '{% endraw %}' >> "$file"
 
     sed -i \
         -e 's/{{repo_name}}/{% endraw %}{{repo_name}}{% raw %}/g' \
         -e 's/{{github_org}}/{% endraw %}{{github_org}}{% raw %}/g' \
+        -e 's/{{project_name}}/{% endraw %}{{project_name}}{% raw %}/g' \
         "$file"
 
     mv "$file" "$file.jinja"
