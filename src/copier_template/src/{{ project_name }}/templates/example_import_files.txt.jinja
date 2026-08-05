@@ -38,7 +38,7 @@ spec:
         subprocess.call('python -m venv /tmp/venv', shell=True)
         subprocess.call('/tmp/venv/bin/pip install -r /mounted_files/requirements.txt', shell=True)
         subprocess.call('/tmp/venv/bin/python -m ipykernel install --prefix=/tmp/venv --name=venv', shell=True)
-        subprocess.call('/tmp/venv/bin/python -m jupyter nbconvert --execute --allow-errors --to html --output notebook --output-dir /tmp /mounted_files/notebook.ipynb', shell=True)
+        subprocess.call('/tmp/venv/bin/python -m jupyter nbconvert --execute --allow-errors --to html --output notebook --output-dir /tmp /mounted_files/pandas.ipynb', shell=True)
       command:
       - python
       volumeMounts:
