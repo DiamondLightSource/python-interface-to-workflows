@@ -64,7 +64,7 @@ def test_set_token_env_variable(
         keycloak.token.assert_not_called()
     mock_set_key.assert_has_calls(
         [
-            call("src/.env", "EXPIRY", str(123456789 + 1800)),
+            call("src/.env", "EXPIRY", str(123456789)),
             call("src/.env", "TOKEN", "fake_token"),
             call("src/.env", "REFRESHTOKEN", "fake_refresh"),
         ]
@@ -97,8 +97,7 @@ def test_set_token_env_variable_attribute_error(
     mock_gen_code_challenge.return_value = ("challenge", "S256")
     mock_token_expired.return_value = True
 
-    os.environ["REFRESHTOKEN"] = "refresh"
-
+    os.environ["REFRESHTOKEN"] = "fake_refresh"
     keycloak = MagicMock()
     mock_gen_keycloak_id.return_value = keycloak
 

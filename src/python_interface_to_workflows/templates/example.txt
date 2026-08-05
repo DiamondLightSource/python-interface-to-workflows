@@ -12,12 +12,12 @@ metadata:
     workflows.diamond.ac.uk/science-group-examples: 'true'
 spec:
   entrypoint: workflowentry
+  podSpecPatch: '{"containers": [{"name": "main", "resources": {"limits": {"cpu":
+    "1", "memory": "1Gi"}, "requests": {"cpu": "1", "memory": "1Gi"}}}]}'
   templates:
   - name: workflowentry
     dag:
       tasks:
-      - name: install
-        template: install-dependencies
       - name: params
         template: generate-parameters
         arguments:
@@ -33,7 +33,7 @@ spec:
           - name: tiff
             value: 'True'
       - name: create-image
-        depends: install && params
+        depends: params
         template: create-image
         withParam: '{{tasks.params.outputs.parameters.out-parameters}}'
         arguments:
@@ -53,22 +53,6 @@ spec:
           parameters:
           - name: paths
             value: '{{tasks.create-image.outputs.parameters.out-paths}}'
-  - name: install-dependencies
-    script:
-      image: python:3.10
-      source: |-
-        import os
-        import sys
-        sys.path.append(os.getcwd())
-        import subprocess
-        print('creating venv')
-        subprocess.check_call(['python', '-m', 'venv', '/tmp/venv'])
-        subprocess.check_call(['/tmp/venv/bin/pip', 'install', 'pillow', 'h5py', 'numpy', 'hera'])
-      command:
-      - python
-      volumeMounts:
-      - name: tmpdir
-        mountPath: /tmp
   - name: generate-parameters
     inputs:
       parameters:
@@ -83,7 +67,7 @@ spec:
         valueFrom:
           path: /tmp/parameters.json
     script:
-      image: python:3.10
+      image: ghcr.io/matt-carre/python-interface-to-workflows-default-image
       source: |-
         import os
         import sys
@@ -128,7 +112,7 @@ spec:
         valueFrom:
           path: /tmp/{{inputs.parameters.extension}}-path.json
     script:
-      image: python:3.10
+      image: ghcr.io/matt-carre/python-interface-to-workflows-default-image
       source: |-
         import os
         import sys
@@ -162,7 +146,7 @@ spec:
         with open(f'/tmp/{extension}-path.json', 'w') as f:
             json.dump(path, f)
       command:
-      - /tmp/venv/bin/python
+      - python
       volumeMounts:
       - name: tmpdir
         mountPath: /tmp
@@ -177,7 +161,7 @@ spec:
         archive:
           none: {}
     script:
-      image: python:3.10
+      image: ghcr.io/matt-carre/python-interface-to-workflows-default-image
       source: |-
         import os
         import sys
@@ -199,10 +183,19 @@ spec:
                     f.create_dataset(f'image_{i}', data=arr, dtype=arr.dtype)
         print('done')
       command:
-      - /tmp/venv/bin/python
+      - python
       volumeMounts:
       - name: tmpdir
         mountPath: /tmp
+  tolerations:
+  - effect: NoSchedule
+    key: nodetype
+    operator: Equal
+    value: gpu
+  - effect: NoSchedule
+    key: nodegroup
+    operator: Equal
+    value: workflows
   volumeClaimTemplates:
   - metadata:
       name: tmpdir
