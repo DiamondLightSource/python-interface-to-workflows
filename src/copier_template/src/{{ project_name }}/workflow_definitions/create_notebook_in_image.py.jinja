@@ -1,3 +1,4 @@
+{% raw %}
 import json
 
 from hera.shared import global_config
@@ -79,7 +80,7 @@ with Workflow(
         "workflows.argoproj.io/title": "notebook.yaml remade via hera",
         "workflows.argoproj.io/description": """Runs pandas.ipynb and converts it to an
 html file""",
-        "workflows.diamond.ac.uk/repository": "https://github.com/DiamondLightSource/python-interface-to-workflows",
+        "workflows.diamond.ac.uk/repository": "https://github.com/{% endraw %}{{github_org}}{% raw %}/{% endraw %}{{repo_name}}{% raw %}",
     },
     volumes=Volume(name="tmpdir", mount_path="/tmp/", size="1Gi"),
 ) as w:
@@ -89,6 +90,7 @@ html file""",
 
 
 with open(
-    "src/python_interface_to_workflows/templates/example_import_files.txt", "w"
+    "src/{% endraw %}{{project_name}}{% raw %}/templates/example_import_files.txt", "w"
 ) as div:
     div.write(w.to_yaml())  # pyright: ignore[reportUnknownMemberType]
+{% endraw %}
