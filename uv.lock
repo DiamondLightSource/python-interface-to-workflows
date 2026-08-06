@@ -1919,7 +1919,7 @@ wheels = [
 
 [[package]]
 name = "python-workflow-submitter"
-version = "0.4.0"
+version = "0.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -1936,7 +1936,7 @@ dependencies = [
     { name = "pyyaml" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/68/00/faf63331a1204fc82532d24967246c452116e4c053ea46fb6eb92d132b45/python_workflow_submitter-0.4.0.tar.gz", hash = "sha256:43060752d80fac674ed354c5cb7599115126ce0da6b142a0621827c5b94a6038", size = 181430, upload-time = "2026-08-06T09:24:22.086Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/1c/f8/39caad75cb0b5e9205424e91baf9dd1c719096f95dca218ca114293c045a/python_workflow_submitter-0.4.2.tar.gz", hash = "sha256:f5ff6d56c42d6f0c7c4337a59979f7d4e6f733e19a159accc5a309f8c41a4fda", size = 181442, upload-time = "2026-08-06T12:01:11.956Z" }
 
 [[package]]
 name = "pyyaml"
