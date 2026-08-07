@@ -1,14 +1,9 @@
 # Setting up a development environment
 1. run "uv lock" to generate the uv.lock file
-2. Create .env in this folder (with the path src/.env) containing the following variables:
-
-HOST=https://workflows.diamond.ac.uk/graphql (to submit to the production cluster)
-DEFAULT_IMAGE= (usually python 3.10)
-VISIT= (the Visit you wish to run the template on)
-TOKEN=
-EXPIRY=
-AUTH=
-
+2. Create .env in this folder (with the path src/.env) containing the following variable (everything else will be set automatically):
+```bash
+VISIT={your visit}
+```
 3. Build the dev container
 
 # Submitting a workflow
@@ -39,6 +34,5 @@ Alternatively, you can set the default image at the top of the file by adding:
 
 ```python
 global_config.set_class_defaults(  # pyright: ignore
-    Script, image=str(os.environ.get("DEFAULT_IMAGE"))
-)
+    Script, image=ghcr.io/Your-Github-Name/image-name)
 ```
