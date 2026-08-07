@@ -17,20 +17,8 @@ def main(args: Sequence[str] | None = None) -> None:
         action="version",
         version=__version__,
     )
-    parser.add_argument(
-        "-sleep",
-    )
     parser.parse_args(args)
-    if "-sleep" in vars(parser.parse_args(args)):
-        while True:
-            import time
-
-            time.sleep(200)
 
 
 if __name__ == "__main__":
     main()
-    while True:
-        import time
-
-        time.sleep(200)
