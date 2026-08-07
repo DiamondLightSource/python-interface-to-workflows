@@ -1,0 +1,63 @@
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: hera-example-pandas
+  annotations:
+    workflows.argoproj.io/description: |-
+      Replicates the functionality of
+      notebook.yaml
+    workflows.argoproj.io/title: notebook.yaml remade via hera
+    workflows.diamond.ac.uk/repository: https://github.com/DiamondLightSource/python-interface-to-workflows
+  labels:
+    workflows.diamond.ac.uk/science-group-examples: 'true'
+spec:
+  entrypoint: workflowentry
+  podSpecPatch: '{"containers": [{"name": "main", "resources": {"limits": {"cpu":
+    "500m", "memory": "2Gi"}, "requests": {"cpu": "500m", "memory": "2Gi"}}}]}'
+  templates:
+  - name: workflowentry
+    dag:
+      tasks:
+      - name: mount-files
+        template: mount-files
+  - name: mount-files
+    outputs:
+      artifacts:
+      - name: notebook
+        path: /tmp/notebook.html
+        archive:
+          none: {}
+    script:
+      image: ghcr.io/matt-carre/python-interface-to-workflows-mounted-image:latest
+      source: |-
+        import os
+        import sys
+        sys.path.append(os.getcwd())
+        import subprocess
+        subprocess.call('python -m venv /tmp/venv', shell=True)
+        subprocess.call('/tmp/venv/bin/pip install -r /mounted_files/requirements.txt', shell=True)
+        subprocess.call('/tmp/venv/bin/python -m ipykernel install --prefix=/tmp/venv --name=venv', shell=True)
+        subprocess.call('/tmp/venv/bin/python -m jupyter nbconvert --execute --allow-errors --to html --output notebook --output-dir /tmp /mounted_files/pandas.ipynb', shell=True)
+      command:
+      - python
+      volumeMounts:
+      - name: tmpdir
+        mountPath: /tmp
+  tolerations:
+  - effect: NoSchedule
+    key: nodetype
+    operator: Equal
+    value: gpu
+  - effect: NoSchedule
+    key: nodegroup
+    operator: Equal
+    value: workflows
+  volumeClaimTemplates:
+  - metadata:
+      name: tmpdir
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
