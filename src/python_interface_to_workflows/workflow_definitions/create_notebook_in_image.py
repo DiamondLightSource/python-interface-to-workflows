@@ -2,9 +2,9 @@ import json
 
 from hera.shared import global_config
 from hera.workflows import (
-    DAG,
     Artifact,
     Script,
+    Steps,
     Volume,
     Workflow,
     script,  # pyright: ignore[reportUnknownVariableType]
@@ -12,22 +12,31 @@ from hera.workflows import (
 from hera.workflows import models as m
 from hera.workflows.archive import NoneArchiveStrategy
 
+# Sets the default image, unless specified otherwise, to this.
+# This image has access to the /workflow_definitions/mounted_files folder
+# and was created with the included dockerfile.
 global_config.set_class_defaults(  # pyright: ignore
     Script,
-    image="ghcr.io/diamondlightsource/python-interface-to-workflows-mounted-in-image:latest",
+    image="ghcr.io/matt-carre/python-interface-to-workflows-mounted-image:latest",
 )
 
 
+# The script decorator allows hera to convert python code into yaml
 @script(
-    command=["python"],
+    command=["python"],  # optional
+    # makes output an artifact to allow it to be downloaded
     outputs=Artifact(
         name="notebook", path="/tmp/notebook.html", archive=NoneArchiveStrategy()
     ),
+    # mounts a volume named "tmpdir" at path "/tmp"
     volume_mounts=[m.VolumeMount(name="tmpdir", mount_path="/tmp")],
 )
 def mount_files():
+    # notably, we install dependencies for scripts *within* the function we run.
+    # They are not interpreted as functions, but as stand-alone scripts.
     import subprocess
 
+    # install our dependencies
     subprocess.call("python -m venv /tmp/venv", shell=True)
     subprocess.call(
         "/tmp/venv/bin/pip install -r /mounted_files/requirements.txt", shell=True
@@ -36,6 +45,7 @@ def mount_files():
         "/tmp/venv/bin/python -m ipykernel install --prefix=/tmp/venv --name=venv",
         shell=True,
     )
+    # convert the notebook file into an html file
     subprocess.call(
         "/tmp/venv/bin/python -m jupyter nbconvert --execute --allow-errors --to html --output notebook --output-dir /tmp /mounted_files/pandas.ipynb",  # noqa: E501
         shell=True,
@@ -43,6 +53,7 @@ def mount_files():
 
 
 with Workflow(
+    # assures that the container has enough resources for our workflow
     pod_spec_patch=json.dumps(
         {
             "containers": [
@@ -62,6 +73,7 @@ with Workflow(
             ]
         }
     ),
+    # assures we run this in a pod with a gpu and no other scheduled workflow
     tolerations=[
         m.Toleration(
             key="nodetype", operator="Equal", value="gpu", effect="NoSchedule"
@@ -70,7 +82,10 @@ with Workflow(
             key="nodegroup", operator="Equal", value="workflows", effect="NoSchedule"
         ),
     ],
+    # name of workflow - will append a short identifier automatically.
     name="hera-example-pandas",
+    # the following is the same as for writing any yaml workflow, but as variables.
+    # All of these are required aside from "workflows.argoproj.io/description".
     entrypoint="workflowentry",
     api_version="argoproj.io/v1alpha1",
     kind="WorkflowTemplate",
@@ -81,14 +96,19 @@ with Workflow(
 html file""",
         "workflows.diamond.ac.uk/repository": "https://github.com/DiamondLightSource/python-interface-to-workflows",
     },
+    # We use Volume objects to define volumes.
     volumes=Volume(name="tmpdir", mount_path="/tmp/", size="1Gi"),
 ) as w:
-    with DAG(name="workflowentry"):
+    # We establish the order of templates to run here, using '>>' to determine order
+    # We can use a DAG instead, in which we write out the dag's architecture afterwards:
+    # grouping tasks with [], i.e., files >> [a, b] will run files, then will
+    # run a and b simultaneously.
+    with Steps(name="workflowentry"):
         files = mount_files()
-        files  # pyright: ignore # noqa: B018
 
 
+# produce a yaml file so we can lint and submit it with python_workflow_submitter
 with open(
-    "src/python_interface_to_workflows/templates/example_import_files.txt", "w"
+    "src/python_interface_to_workflows/templates/example_import_files.yaml", "w"
 ) as div:
     div.write(w.to_yaml())  # pyright: ignore[reportUnknownMemberType]
