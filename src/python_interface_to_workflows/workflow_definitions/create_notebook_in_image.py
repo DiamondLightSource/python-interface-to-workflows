@@ -17,7 +17,7 @@ from hera.workflows.archive import NoneArchiveStrategy
 # and was created with the included dockerfile.
 global_config.set_class_defaults(  # pyright: ignore
     Script,
-    image="ghcr.io/matt-carre/python-interface-to-workflows-mounted-image:latest",
+    image="ghcr.io/diamondlightsource/python-interface-to-workflows-mounted-image:latest",
 )
 
 
@@ -88,7 +88,7 @@ with Workflow(
     # All of these are required aside from "workflows.argoproj.io/description".
     entrypoint="workflowentry",
     api_version="argoproj.io/v1alpha1",
-    kind="WorkflowTemplate",
+    kind="ClusterWorkflowTemplate",
     labels={"workflows.diamond.ac.uk/science-group-examples": "true"},
     annotations={
         "workflows.argoproj.io/title": "notebook.yaml remade via hera",
