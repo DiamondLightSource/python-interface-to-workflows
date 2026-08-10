@@ -7,8 +7,7 @@
 
  Python alternative to creating and running argo workflows in the Data Analysis Platform
 
-This is where you should write a short paragraph that describes what your module does,
-how it does it, and why people should use it.
+This provides a copier template and demonstrating how to use Hera to rewrite workflows using python.
 
 What            | Where
 :---:           | :---:
@@ -16,21 +15,6 @@ Source          | <https://github.com/DiamondLightSource/python-interface-to-wor
 Docker          | `docker run ghcr.io/diamondlightsource/python-interface-to-workflows:latest`
 Releases        | <https://github.com/DiamondLightSource/python-interface-to-workflows/releases>
 
-This is where you should put some images or code snippets that illustrate
-some relevant examples. If it is a library then you might put some
-introductory code here:
-
-```python
-from python_interface_to_workflows import __version__
-
-print(f"Hello python_interface_to_workflows {__version__}")
-```
-
-Or if it is a commandline tool then you might put some example commands here:
-
-```
-python -m python_interface_to_workflows --version
-```
 
 # Using Copier
 ```bash
@@ -49,6 +33,29 @@ copier copy {this_repo's_path} {new_directory_path}
 ```
 or:
 ```bash
-copier copy git@github.com:DiamondLightSource/python-copier-template.git new directory path
+copier copy git@github.com:DiamondLightSource/python-copier-template.git .
+code .
 ```
-rebuild in dev container without cache
+
+Then:
+1) create a .env file in src
+2) run uv lock
+3) rebuild and reopen in container
+
+To submit your yaml files in a notebook, append the following:
+
+```python
+from python_workflow_submitter.submit_workflow import submit_workflow_yaml
+
+await submit_workflow_yaml("example.yaml")
+```
+
+Alternatively:
+```python
+import asyncio
+import os
+
+from python_workflow_submitter.submit_workflow import submit_workflow_yaml
+
+asyncio.run(submit_workflow_yaml("example.yaml", visit=os.environ.get("VISIT")))
+```

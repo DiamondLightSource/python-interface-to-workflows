@@ -108,7 +108,13 @@ html file""",
 
 
 # produce a yaml file so we can lint and submit it with python_workflow_submitter
+# python_workflow_submitter may only submit yaml files, so rename .txt to .yaml if you
+# wish to test this example.
+# Furthermore, absolute paths are preferred (such as the one shown here) to place them
+# within the correct folder upon commiting (see scripts/runthefiles.sh), however these
+# are not required.
 with open(
-    "src/python_interface_to_workflows/templates/example_import_files.yaml", "w"
+    "/workspaces/python-interface-to-workflows/src/python_interface_to_workflows/templates/example_import_files.txt",
+    "w",
 ) as div:
     div.write(w.to_yaml())  # pyright: ignore[reportUnknownMemberType]
