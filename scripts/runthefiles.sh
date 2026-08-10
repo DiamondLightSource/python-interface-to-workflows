@@ -9,5 +9,7 @@ do
     fi
 uv run "$file"
 done
-mv *.txt ../templates/
-git add -u ../templates/
+if compgen -G "*.yaml" > /dev/null || compgen -G "*.txt" > /dev/null; then
+    mv -- *.yaml *.txt ../templates/
+    git add ../templates/
+fi

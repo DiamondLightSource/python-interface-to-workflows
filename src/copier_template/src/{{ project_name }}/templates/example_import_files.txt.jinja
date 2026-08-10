@@ -5,8 +5,8 @@ metadata:
   name: hera-example-pandas
   annotations:
     workflows.argoproj.io/description: |-
-      Replicates the functionality of
-      notebook.yaml
+      Runs pandas.ipynb and converts it to an
+      html file
     workflows.argoproj.io/title: notebook.yaml remade via hera
     workflows.diamond.ac.uk/repository: https://github.com/{% endraw %}{{github_org}}{% raw %}/{% endraw %}{{repo_name}}{% raw %}
   labels:
@@ -17,9 +17,8 @@ spec:
     "500m", "memory": "2Gi"}, "requests": {"cpu": "500m", "memory": "2Gi"}}}]}'
   templates:
   - name: workflowentry
-    dag:
-      tasks:
-      - name: mount-files
+    steps:
+    - - name: mount-files
         template: mount-files
   - name: mount-files
     outputs:
