@@ -26,19 +26,12 @@ for file in yamllist:
         match yamldata["kind"]:
             case "ClusterWorkflowTemplate":
                 clst_tmpt = True
-            case "Workflow":
-                clst_tmpt = True
-            case "WorkflowTemplate":
-                clst_tmpt = True
-            case "ClusterWorkflowTemplate":
-                clst_tmpt = True
             case _:
                 clst_tmpt = False
     else:
         clst_tmpt = False
     if "metadata" in yamldata.keys():
         metadata = True
-        gen_name = "generateName" in yamldata["metadata"].keys()
         normal_name = "name" in yamldata["metadata"].keys()
         if "annotations" in yamldata["metadata"].keys():
             annotations = True
@@ -64,19 +57,14 @@ for file in yamllist:
         else:
             group = labels = False
     else:
-        metadata = normal_name = gen_name = False
-    if all([api_ver, clst_tmpt, title, repo, group, annotations, labels]):
-        if gen_name != normal_name:
-            exit(0)
-        else:
-            print(
-                "generated_name and normal_name error, must have one of these not both"
-            )
-            exit(1)
+        metadata = normal_name = False
+    if all([api_ver, clst_tmpt, title, repo, group, annotations, labels, normal_name]):
+        exit(0)
     else:
         print(f"""
                 within file: {file}...
                 metadata present?: {metadata}
+                name present?: {normal_name}
                 annotations present?: {annotations}
                 labels present?: {labels}
                 api_ver present?: {api_ver}

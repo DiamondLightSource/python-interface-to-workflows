@@ -1,6 +1,6 @@
 {% raw %}
 apiVersion: argoproj.io/v1alpha1
-kind: WorkflowTemplate
+kind: ClusterWorkflowTemplate
 metadata:
   name: hera-example-pandas
   annotations:
@@ -28,7 +28,7 @@ spec:
         archive:
           none: {}
     script:
-      image: ghcr.io/matt-carre/{% endraw %}{{repo_name}}{% raw %}-mounted-image:latest
+      image: ghcr.io/diamondlightsource/{% endraw %}{{repo_name}}{% raw %}-mounted-image:latest
       source: |-
         import os
         import sys
