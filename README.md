@@ -33,7 +33,7 @@ copier copy {this_repo's_path} {new_directory_path}
 ```
 or:
 ```bash
-copier copy git@github.com:DiamondLightSource/python-copier-template.git .
+copier copy git@github.com:DiamondLightSource/python-interface-to-workflows.git .
 code .
 ```
 
