@@ -52,6 +52,13 @@ def mount_files():
     )
 
 
+# If you wanted to make something that submits multiple versions of the same workflow,
+# simply copy the following section and write 'as a' instead of 'as w',
+# then write "a.to_yaml" to a new file, etc.
+# To run them all, as you have to call submit_workflow_yaml once per line, simply
+# write out a submit_workflow_yaml once per file, or write a for loop to submit each
+# sequentially.
+# This way, you can alter input parameters you assign (see visr example)
 with Workflow(
     # assures that the container has enough resources for our workflow
     pod_spec_patch=json.dumps(
