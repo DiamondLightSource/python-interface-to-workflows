@@ -160,7 +160,7 @@ description = "Run tests with coverage"
 commands = [
     [
         "pytest",
-        "--cov=python_interface_to_workflows",
+        "--cov={% endraw %}{{repo_name}}{% raw %}",
         "--cov-report",
         "term",
         "--cov-report",

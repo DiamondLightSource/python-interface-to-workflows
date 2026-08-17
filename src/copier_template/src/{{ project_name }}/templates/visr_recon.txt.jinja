@@ -1,0 +1,278 @@
+{% raw %}
+apiVersion: argoproj.io/v1alpha1
+kind: WorkflowTemplate
+metadata:
+  name: visr-recon-with-{% endraw %}{{repo_name}}{% raw %}
+  annotations:
+    workflows.argoproj.io/description: |-
+      ViSR recon
+      example.yaml
+    workflows.argoproj.io/title: ViSR recon
+    workflows.diamond.ac.uk/repository: https://github.com/{% endraw %}{{github_org}}{% raw %}/{% endraw %}{{repo_name}}{% raw %}
+  labels:
+    workflows.diamond.ac.uk/science-group-imaging: 'true'
+spec:
+  entrypoint: workflowentry
+  templates:
+  - name: workflowentry
+    dag:
+      tasks:
+      - name: tomo-recon
+        template: tomo-recon
+        arguments:
+          parameters:
+          - name: config
+            value: |-
+              [
+                {
+                  "method": "standard_tomo",
+                  "module_path": "httomo.data.hdf.loaders",
+                  "parameters": {
+                    "data_path": "/entry1/tomo_entry/data/data",
+                    "image_key_path": "/entry1/tomo_entry/instrument/detector/image_key",
+                    "rotation_angles": {
+                      "data_path": "/entry1/tomo_entry/data/rotation_angle"
+                    },
+                    "preview": {
+                      "detector_y": {
+                        "start": 100,
+                        "stop": 102
+                      }
+                    }
+                  }
+                },
+                {
+                  "method": "remove_outlier",
+                  "module_path": "tomopy.misc.corr",
+                  "parameters": {
+                    "dif": 0.1,
+                    "size": 3,
+                    "axis": "auto"
+                  }
+                },
+                {
+                  "method": "dark_flat_field_correction",
+                  "module_path": "httomolibgpu.prep.normalize",
+                  "parameters": {
+                      "flats_multiplier": 1,
+                      "darks_multiplier": 1
+                  }
+                },
+                {
+                  "method": "find_center_vo",
+                  "module_path": "httomolibgpu.recon.rotation",
+                  "parameters": {
+                    "ind": null,
+                    "smin": -50,
+                    "smax": 50,
+                    "srad": 6,
+                    "step": 0.25,
+                    "ratio": 0.5,
+                    "drop": 20
+                  },
+                  "id": "centering",
+                  "side_outputs": {
+                    "cor": "centre_of_rotation"
+                  }
+                },
+                {
+                  "method": "FBP3d_tomobar",
+                  "module_path": "httomolibgpu.recon.algorithm",
+                  "parameters": {
+                    "center": "${{centering.side_outputs.centre_of_rotation}}",
+                    "filter_freq_cutoff": 0.6,
+                    "recon_size": null,
+                    "recon_mask_radius": null
+                  },
+                  "save_result": true
+                },
+                {
+                    "method": "calculate_stats",
+                    "module_path": "httomo.methods",
+                    "parameters": {},
+                    "id": "statistics",
+                    "side_outputs": {
+                        "glob_stats": "glob_stats"
+                    }
+                },
+                {
+                    "method": "rescale_to_int",
+                    "module_path": "httomolib.misc.rescale",
+                    "parameters": {
+                        "perc_range_min": 0,
+                        "perc_range_max": 100,
+                        "bits": 8,
+                        "glob_stats": "${{statistics.side_outputs.glob_stats}}"
+                    },
+                    "save_result": true
+                }
+              ]
+          - name: input
+            value: '/dls/i12/data/2025/.......'
+          - name: output
+            value: '/dls/i12/data/2025/.......'
+          - name: recon_outdir_name
+            value: sweep-run
+          - name: nprocs
+            value: '1'
+          - name: memory
+            value: 1Gi
+      - name: convert-recon-data-format
+        depends: tomo-recon
+        template: convert-recon-data-format
+        arguments:
+          parameters:
+          - name: recon_dir_path
+            value: '{{tasks.tomo-recon.outputs.parameters.out-path}}'
+  - name: tomo-recon
+    podSpecPatch: '{"containers": [{"name": "main", "resources": {"limits": {"cpu":
+      "{{inputs.parameters.nprocs}}", "memory": "{{inputs.parameters.memory}}", "nvidia.com/gpu":
+      "{{inputs.parameters.nprocs}}"}, "requests": {"cpu": "{{inputs.parameters.nprocs}}",
+      "memory": "{{inputs.parameters.memory}}", "nvidia.com/gpu": "{{inputs.parameters.nprocs}}"}}}]}'
+    tolerations:
+    - effect: NoSchedule
+      key: nvidia.com/gpu
+      operator: Exists
+    - effect: NoSchedule
+      key: nodetype
+      operator: Equal
+      value: gpu
+    - effect: NoSchedule
+      key: nodegroup
+      operator: Equal
+      value: workflows
+    inputs:
+      parameters:
+      - name: config
+      - name: input
+      - name: output
+      - name: recon_outdir_name
+      - name: nprocs
+      - name: memory
+    outputs:
+      parameters:
+      - name: out-path
+        valueFrom:
+          path: /tmp/parameters.json
+    script:
+      image: ghcr.io/diamondlightsource/httomo:latest
+      source: |-
+        import os
+        import sys
+        sys.path.append(os.getcwd())
+        import json
+        try: config = json.loads(r'''{{inputs.parameters.config}}''')
+        except: config = r'''{{inputs.parameters.config}}'''
+        try: input = json.loads(r'''{{inputs.parameters.input}}''')
+        except: input = r'''{{inputs.parameters.input}}'''
+        try: memory = json.loads(r'''{{inputs.parameters.memory}}''')
+        except: memory = r'''{{inputs.parameters.memory}}'''
+        try: nprocs = json.loads(r'''{{inputs.parameters.nprocs}}''')
+        except: nprocs = r'''{{inputs.parameters.nprocs}}'''
+        try: output = json.loads(r'''{{inputs.parameters.output}}''')
+        except: output = r'''{{inputs.parameters.output}}'''
+        try: recon_outdir_name = json.loads(r'''{{inputs.parameters.recon_outdir_name}}''')
+        except: recon_outdir_name = r'''{{inputs.parameters.recon_outdir_name}}'''
+
+        import json
+        import subprocess
+        loaded_config = json.dumps(config)
+        subprocess.check_call(['/opt/conda/bin/mpirun', '-n', str(nprocs), '/opt/conda/bin/python', '-m', 'httomo', 'run', '--pipeline-format', 'json', '--output-folder-name', recon_outdir_name, input, loaded_config, output])
+        with open('/tmp/parameters.json', 'w') as f:
+            json.dump(f'{output}/{recon_outdir_name}', f)
+      command:
+      - /opt/conda/bin/python
+      env:
+      - name: CUPY_CACHE_DIR
+        value: /tmp/.cupy/kernel_cache
+      - name: MKL_NUM_THREADS
+        value: '1'
+      - name: NUMEXPR_NUM_THREADS
+        value: '1'
+      - name: OMP_NUM_THREADS
+        value: '1'
+      volumeMounts:
+      - name: session
+        mountPath: '{{workflow.parameters.visitdir}}'
+      - name: tmpdir
+        mountPath: /tmp
+  - name: convert-recon-data-format
+    inputs:
+      parameters:
+      - name: recon_dir_path
+      - name: tmpdir_path
+        default: /tmp
+      - name: raw_recon_filename
+        default: recon.raw
+      - name: metadata_filename
+        default: metadata.json
+    outputs:
+      artifacts:
+      - name: recon
+        path: '{{inputs.parameters.tmpdir_path}}/{{inputs.parameters.raw_recon_filename}}'
+        archive:
+          none: {}
+      - name: metadata
+        path: '{{inputs.parameters.tmpdir_path}}/{{inputs.parameters.metadata_filename}}'
+        archive:
+          none: {}
+    script:
+      image: ghcr.io/diamondlightsource/httomo:latest
+      source: |-
+        import os
+        import sys
+        sys.path.append(os.getcwd())
+        import json
+        try: metadata_filename = json.loads(r'''{{inputs.parameters.metadata_filename}}''')
+        except: metadata_filename = r'''{{inputs.parameters.metadata_filename}}'''
+        try: raw_recon_filename = json.loads(r'''{{inputs.parameters.raw_recon_filename}}''')
+        except: raw_recon_filename = r'''{{inputs.parameters.raw_recon_filename}}'''
+        try: recon_dir_path = json.loads(r'''{{inputs.parameters.recon_dir_path}}''')
+        except: recon_dir_path = r'''{{inputs.parameters.recon_dir_path}}'''
+        try: tmpdir_path = json.loads(r'''{{inputs.parameters.tmpdir_path}}''')
+        except: tmpdir_path = r'''{{inputs.parameters.tmpdir_path}}'''
+
+        import json
+        from pathlib import Path
+        import h5py
+        RAW_RECON_PATH = f'{tmpdir_path}/{raw_recon_filename}'
+        HDF5_RECON_DIR = Path(recon_dir_path)
+        HDF5_RECON_FILENAME_PATTERN = '*-httomolib-rescale_to_int.h5'
+        hdf5_recon_data_path = list(HDF5_RECON_DIR.glob(HDF5_RECON_FILENAME_PATTERN))[0]
+        with h5py.File(hdf5_recon_data_path, 'r') as f:
+            data = f['/data'][:]
+            data.tofile(RAW_RECON_PATH)
+        METADATA_PATH = f'{tmpdir_path}/{metadata_filename}'
+        order = 'C' if data.flags.c_contiguous else 'F'
+        metadata = {'shape': list(data.shape), 'dtype': str(data.dtype), 'order': order}
+        with open(METADATA_PATH, 'w') as f:
+            f.write(json.dumps(metadata, indent=2))
+      command:
+      - /opt/conda/bin/python
+      volumeMounts:
+      - name: session
+        mountPath: '{{workflow.parameters.visitdir}}'
+      - name: tmpdir
+        mountPath: /tmp
+  volumeClaimTemplates:
+  - metadata:
+      name: tmpdir
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+  volumes:
+  - name: session
+    hostPath:
+      path: '{{workflow.parameters.visitdir}}'
+      type: Directory
+  arguments:
+    parameters:
+    - name: visitdir
+      valueFrom:
+        configMapKeyRef:
+          name: sessionspaces
+          key: data_directory
+{% endraw %}
