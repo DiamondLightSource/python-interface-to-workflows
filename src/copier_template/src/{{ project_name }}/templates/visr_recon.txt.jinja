@@ -1,12 +1,12 @@
 {% raw %}
 apiVersion: argoproj.io/v1alpha1
-kind: WorkflowTemplate
+kind: ClusterWorkflowTemplate
 metadata:
   name: visr-recon-with-{% endraw %}{{repo_name}}{% raw %}
   annotations:
     workflows.argoproj.io/description: |-
-      ViSR recon
-      example.yaml
+      ViSR recon example rewritten using Hera,
+              to convert a given .nxs file into an hdf5 file
     workflows.argoproj.io/title: ViSR recon
     workflows.diamond.ac.uk/repository: https://github.com/{% endraw %}{{github_org}}{% raw %}/{% endraw %}{{repo_name}}{% raw %}
   labels:
@@ -108,9 +108,9 @@ spec:
                 }
               ]
           - name: input
-            value: '/dls/i12/data/2025/.......'
+            value: /dls/i12/data/2025/.......
           - name: output
-            value: '/dls/i12/data/2025/.......'
+            value: /dls/i12/data/2025/........
           - name: recon_outdir_name
             value: sweep-run
           - name: nprocs
