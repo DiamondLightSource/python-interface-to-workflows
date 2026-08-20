@@ -16,6 +16,11 @@ Docker          | `docker run ghcr.io/diamondlightsource/python-interface-to-wor
 Releases        | <https://github.com/DiamondLightSource/python-interface-to-workflows/releases>
 
 
+# Examples
+What            | Where
+:---:           | :---:
+A basic example showing a file being mounted from a folder and a notebook running in a pod | <https://github.com/DiamondLightSource/python-interface-to-workflows/blob/main/src/python_interface_to_workflows/workflow_definitions/create_notebook_in_image.py>
+A more advanced example showing a visr recon workflow, converting an .nxs to a .hdf5 file.          | <https://github.com/DiamondLightSource/python-interface-to-workflows/blob/main/src/python_interface_to_workflows/workflow_definitions/visr_notebook_example/visr-recon.ipynb>
 # Using Copier
 ```bash
 mkdir new_directory_path
