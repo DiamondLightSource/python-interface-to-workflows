@@ -18,6 +18,7 @@ Releases        | <https://github.com/DiamondLightSource/python-interface-to-wor
 
 # Using Copier
 ```bash
+module load uv
 mkdir new_directory_path
 cd new_directory_path
 git init 
@@ -29,11 +30,11 @@ cd ..
 then either:
 ```bash
 git clone git@github.com:DiamondLightSource/python-interface-to-workflows.git
-copier copy {this_repo's_path} {new_directory_path}
+uvx copier copy {this_repo's_path} {new_directory_path}
 ```
 or:
 ```bash
-copier copy git@github.com:DiamondLightSource/python-interface-to-workflows.git .
+uvx copier copy git@github.com:DiamondLightSource/python-interface-to-workflows.git .
 code .
 ```
 
