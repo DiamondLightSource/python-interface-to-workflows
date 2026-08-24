@@ -12,11 +12,13 @@ repo_name:
   help: |
     What is the name for your new repo?
     Generally, use the package name with underscores replaced by dashes.
+    (default = your project name with '-' rather than '_')
   default: "{{ project_name | replace('_', '-') }}"
   validator: >-
     {% if not (repo_name | regex_search('^[a-zA-Z0-9](?:[a-zA-Z0-9_.-]*[a-zA-Z0-9])?$')) %}
     {{ repo_name }} is not a valid repo name
     {% endif %}
+
 description:
   type: str
   help: Please provide a description of your project
@@ -24,7 +26,7 @@ description:
 
 github_org:
   type: str
-  help: What is your github organisation?
+  help: What is your github organisation? (default = DiamondLightSource)
   default: DiamondLightSource
 
 author_name:
@@ -35,6 +37,6 @@ author_name:
 author_email:
   type: str
   help: What is your email address?
-  placeholder: email@diamond.ac.uk
+  placeholder: your.name@diamond.ac.uk
 
 _subdirectory: "src/copier_template"
