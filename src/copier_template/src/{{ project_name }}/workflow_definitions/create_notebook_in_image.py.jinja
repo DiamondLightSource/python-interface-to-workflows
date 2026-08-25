@@ -16,9 +16,11 @@ from hera.workflows.archive import NoneArchiveStrategy
 # Sets the default image, unless specified otherwise, to this.
 # This image has access to the /workflow_definitions/mounted_files folder
 # and was created with the included dockerfile.
+# furthermore, this image will only be created on a push to main
+# if locally testing, use "ghcr.io/diamondlightsource/python-interface-to-workflows-mounted-in-image:latest"
 global_config.set_class_defaults(  # pyright: ignore
     Script,
-    image="ghcr.io/diamondlightsource/{% endraw %}{{repo_name}}{% raw %}-mounted-image:latest",
+    image="ghcr.io/diamondlightsource/{% endraw %}{{repo_name}}{% raw %}-mounted-in-image:latest",
 )
 
 

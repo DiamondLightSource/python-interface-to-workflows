@@ -27,7 +27,7 @@ spec:
         archive:
           none: {}
     script:
-      image: ghcr.io/diamondlightsource/python-interface-to-workflows-mounted-image:latest
+      image: ghcr.io/diamondlightsource/python-interface-to-workflows-mounted-in-image:latest
       source: |-
         import os
         import sys
