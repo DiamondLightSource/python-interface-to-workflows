@@ -1,0 +1,55 @@
+stages:
+  - lint
+  - test
+  - dist
+  # TODO: the following
+  # - container
+  # - release
+  # - update-image
+  # - commit-lint
+
+lint:
+  stage: lint
+  image: python:3.12
+  before_script:
+    - pip install uv
+    - curl -sLO https://github.com/argoproj/argo-workflows/releases/download/v4.0.6/argo-linux-amd64.gz
+    - gunzip argo-linux-amd64.gz
+    - chmod +x argo-linux-amd64
+    - mv argo-linux-amd64 /usr/local/bin/argo
+  script:
+    - uv run --locked tox -e pre-commit,type-checking
+
+test:
+  stage: test
+  parallel:
+    matrix:
+      - PYTHON_VERSION: ["3.11", "3.12", "3.13", "3.14"]
+  image: python:${PYTHON_VERSION}
+  variables:
+    PY_IGNORE_IMPORTMISMATCH: "1"
+    UV_PYTHON: ${PYTHON_VERSION}
+  before_script:
+    - pip install uv
+  script:
+    - uv run --locked tox -e tests
+  artifacts:
+    paths:
+      - cov.xml
+    when: always
+
+dist:
+  stage: dist
+  image: python:3.12
+  before_script:
+    - pip install uv
+  script:
+    - export SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
+    - uvx --from build pyproject-build
+    - uvx twine check --strict dist/*
+    - python -m pip install dist/*.whl
+    - python -m $(ls --hide='*.egg-info' src | head -1) --version
+  artifacts:
+    name: dist
+    paths:
+      - dist/
