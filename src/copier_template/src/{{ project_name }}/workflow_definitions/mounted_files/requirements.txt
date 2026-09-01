@@ -4,5 +4,5 @@ pandas==2.2.3
 scipy==1.15.3
 nbconvert==7.17.1
 ipykernel==6.29.5
-ipython==9.2.0
+ipython==9.17.1
 papermill==2.6.0
