@@ -1,5 +1,5 @@
 numpy==2.2.5
-matplotlib==3.10.3
+matplotlib==3.11.1
 pandas==2.2.3
 scipy==1.15.3
 nbconvert==7.17.1
