@@ -34,7 +34,6 @@ requires-python = ">=3.11"
 
 [dependency-groups]
 dev = [
-    "copier",
     "pre-commit",
     "pyright",
     "pytest",
@@ -61,6 +60,10 @@ GitHub = "https://github.com/DiamondLightSource/python-interface-to-workflows"
 [[project.authors]] # Further authors may be added by duplicating this section
 email = "thomas.thomas@diamond.ac.uk"
 name = "Thomas Binu Thomas"
+
+[tool.uv]
+# Minimum uv to fix eMudhra CA cert incident (see discuss.python.org/t/109576)
+required-version = ">=0.13.5"
 
 [tool.setuptools_scm]
 version_file = "src/python_interface_to_workflows/_version.py"
